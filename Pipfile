@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pydantic = {extras = ["email"], version = "*"}
+aiohttp = "*"
+grpcio = "*"
+
+[dev-packages]
+grpcio-tools = "*"
+ipython = "*"
+
+[requires]
+python_version = "3.12"
+python_full_version = "3.12.3"
