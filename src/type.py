@@ -13,7 +13,7 @@ class ChannelDTO:
     public_key: PublicKey
 
 
-class NodeAlreadyIsConnected(Exception):
+class NodeAlreadyConnected(Exception):
     pass
 
 

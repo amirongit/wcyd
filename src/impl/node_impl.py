@@ -1,5 +1,5 @@
 from src.abc.node import Node
-from src.type import ChannelDTO, Identifier, NodeAlreadyAnswered, NodeAlreadyIsConnected, NodeNotFound, PublicKey
+from src.type import ChannelDTO, Identifier, NodeAlreadyAnswered, NodeAlreadyConnected, NodeNotFound, PublicKey
 
 
 class NodeImpl(Node):
@@ -22,13 +22,13 @@ class NodeImpl(Node):
 
     def connect(self, node: Node) -> None:
         if node.identifier in self.neighbors:
-            raise NodeAlreadyIsConnected
+            raise NodeAlreadyConnected
 
         self._neighbors[node.identifier] = node
 
         try:
             node.connect(self)
-        except NodeAlreadyIsConnected:
+        except NodeAlreadyConnected:
             return
 
     def find(self, questioners: set[Identifier], identifier: Identifier) -> Node:
@@ -41,9 +41,9 @@ class NodeImpl(Node):
         new_questioners = questioners | {self.identifier}
         for immediate in {v for k, v in self._neighbors.items() if k not in questioners}:
             try:
-                return immediate.find(questioners, identifier)
+                return immediate.find(new_questioners, identifier)
             except NodeNotFound:
-                continue
+                new_questioners |= {immediate.identifier}
 
         raise NodeNotFound
 
