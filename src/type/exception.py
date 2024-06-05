@@ -8,3 +8,7 @@ class AlreadyAnswered(Exception):
 
 class NotFound(Exception):
     pass
+
+
+class SchemaNotSupported(Exception):
+    pass
