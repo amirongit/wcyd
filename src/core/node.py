@@ -1,5 +1,7 @@
 from src.abc.core.inode import INode
-from src.type import ChannelDTO, Identifier, AlreadyAnswered, AlreadyConnected, NotFound, PublicKey
+from src.type.dto import ChannelDTO
+from src.type.alias import Identifier, PublicKey
+from src.type.exception import AlreadyAnswered, AlreadyConnected, NotFound
 
 
 class Node(INode):

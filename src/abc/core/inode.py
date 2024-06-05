@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from src.type import ChannelDTO, Identifier, PublicKey
+from src.type.dto import ChannelDTO
+from src.type.alias import Identifier, PublicKey
+from src.type.exception import AlreadyAnswered, AlreadyConnected, NotFound
 
 
 class INode(ABC):
