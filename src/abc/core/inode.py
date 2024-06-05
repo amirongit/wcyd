@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from src.type import ChannelDTO, Identifier, PublicKey
 
 
-class Node(ABC):
+class INode(ABC):
 
     @property
     @abstractmethod
@@ -20,7 +20,7 @@ class Node(ABC):
     def neighbors(self) -> set[Identifier]: ...
 
     @abstractmethod
-    def connect(self, node: Node) -> None: ...
+    def connect(self, node: INode) -> None: ...
 
     @abstractmethod
-    def find(self, questioners: set[Identifier], identifier: Identifier) -> Node: ...
+    def find(self, questioners: set[Identifier], identifier: Identifier) -> INode: ...

@@ -13,13 +13,13 @@ class ChannelDTO:
     public_key: PublicKey
 
 
-class NodeAlreadyConnected(Exception):
+class AlreadyConnected(Exception):
     pass
 
 
-class NodeAlreadyAnswered(Exception):
+class AlreadyAnswered(Exception):
     pass
 
 
-class NodeNotFound(Exception):
+class NotFound(Exception):
     pass

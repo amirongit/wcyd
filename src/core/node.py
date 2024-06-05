@@ -1,12 +1,12 @@
-from src.abc.node import Node
-from src.type import ChannelDTO, Identifier, NodeAlreadyAnswered, NodeAlreadyConnected, NodeNotFound, PublicKey
+from src.abc.core.inode import INode
+from src.type import ChannelDTO, Identifier, AlreadyAnswered, AlreadyConnected, NotFound, PublicKey
 
 
-class NodeImpl(Node):
+class Node(INode):
     def __init__(self, identifier: Identifier, public_key: PublicKey, endpoint: str):
         self._channel: ChannelDTO = ChannelDTO(endpoint=endpoint, public_key=public_key) # type: ignore
         self._identifier: Identifier = identifier
-        self._neighbors: dict[Identifier, Node] = dict()
+        self._neighbors: dict[Identifier, INode] = dict()
 
     @property
     def channel(self) -> ChannelDTO:
@@ -20,20 +20,20 @@ class NodeImpl(Node):
     def neighbors(self) -> set[Identifier]:
         return set(self._neighbors.keys())
 
-    def connect(self, node: Node) -> None:
+    def connect(self, node: INode) -> None:
         if node.identifier in self.neighbors:
-            raise NodeAlreadyConnected
+            raise AlreadyConnected
 
         self._neighbors[node.identifier] = node
 
         try:
             node.connect(self)
-        except NodeAlreadyConnected:
+        except AlreadyConnected:
             return
 
-    def find(self, questioners: set[Identifier], identifier: Identifier) -> Node:
+    def find(self, questioners: set[Identifier], identifier: Identifier) -> INode:
         if self.identifier in questioners:
-            raise NodeAlreadyAnswered
+            raise AlreadyAnswered
 
         if (immediate := self._neighbors.get(identifier)) is not None:
             return immediate
@@ -42,8 +42,8 @@ class NodeImpl(Node):
         for immediate in {v for k, v in self._neighbors.items() if k not in questioners}:
             try:
                 return immediate.find(new_questioners, identifier)
-            except NodeNotFound:
+            except NotFound:
                 new_questioners |= {immediate.identifier}
 
-        raise NodeNotFound
+        raise NotFound
 
