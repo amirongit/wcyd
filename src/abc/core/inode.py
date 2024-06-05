@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import Coroutine, Self, NoReturn
 
 from src.type.dto import ChannelDTO
 from src.type.alias import Identifier, PublicKey
@@ -19,10 +20,10 @@ class INode(ABC):
 
     @property
     @abstractmethod
-    def neighbors(self) -> set[Identifier]: ...
+    def neighbors(self) -> Coroutine[Self, NoReturn, set[Identifier]]: ...
 
     @abstractmethod
-    def connect(self, node: INode) -> None: ...
+    async def connect(self, node: INode) -> None: ...
 
     @abstractmethod
-    def find(self, questioners: set[Identifier], identifier: Identifier) -> INode: ...
+    async def find(self, questioners: set[Identifier], identifier: Identifier) -> INode: ...

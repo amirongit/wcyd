@@ -1,13 +1,15 @@
+from typing import NoReturn, Coroutine, Self
+
 from src.abc.core.inode import INode
 from src.type.dto import ChannelDTO
 from src.type.alias import Identifier, PublicKey
 from src.type.exception import AlreadyAnswered, AlreadyConnected, NotFound
 
 
-class Node(INode):
+class LocalNode(INode):
     def __init__(self, identifier: Identifier, public_key: PublicKey, endpoint: str):
-        self._channel: ChannelDTO = ChannelDTO(endpoint=endpoint, public_key=public_key) # type: ignore
-        self._identifier: Identifier = identifier
+        self._channel = ChannelDTO(endpoint=endpoint, public_key=public_key) # type: ignore
+        self._identifier = identifier
         self._neighbors: dict[Identifier, INode] = dict()
 
     @property
@@ -19,21 +21,23 @@ class Node(INode):
         return self._identifier
 
     @property
-    def neighbors(self) -> set[Identifier]:
-        return set(self._neighbors.keys())
+    def neighbors(self) -> Coroutine[Self, NoReturn, set[Identifier]]:
+        async def awaitable(self) -> set[Identifier]:
+            return set(self._neighbors.keys())
+        return awaitable(self)
 
-    def connect(self, node: INode) -> None:
-        if node.identifier in self.neighbors:
+    async def connect(self, node: INode) -> None:
+        if node.identifier in await self.neighbors:
             raise AlreadyConnected
 
         self._neighbors[node.identifier] = node
 
         try:
-            node.connect(self)
+            await node.connect(self)
         except AlreadyConnected:
-            return
+            pass
 
-    def find(self, questioners: set[Identifier], identifier: Identifier) -> INode:
+    async def find(self, questioners: set[Identifier], identifier: Identifier) -> INode:
         if self.identifier in questioners:
             raise AlreadyAnswered
 
@@ -43,9 +47,8 @@ class Node(INode):
         new_questioners = questioners | {self.identifier}
         for immediate in {v for k, v in self._neighbors.items() if k not in questioners}:
             try:
-                return immediate.find(new_questioners, identifier)
+                return await immediate.find(new_questioners, identifier)
             except NotFound:
                 new_questioners |= {immediate.identifier}
 
         raise NotFound
-
