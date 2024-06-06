@@ -13,6 +13,8 @@ blacksheep = "*"
 grpcio-tools = "*"
 ipython = "*"
 mypy = "*"
+uvicorn = "*"
+debugpy = "*"
 
 [requires]
 python_version = "3.12"
