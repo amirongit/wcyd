@@ -4,11 +4,11 @@ from blacksheep.server.controllers import APIController
 class BaseController(APIController):
 
     ROUTE: str = ''
-    VERSION: int = 1
+    VERSION: int = 0
 
     @classmethod
     def version(cls) -> str:
-        return str(cls.VERSION)
+        return 'v' + str(cls.VERSION)
 
     @classmethod
     def route(cls) -> str:
