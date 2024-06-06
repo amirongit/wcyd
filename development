@@ -1,2 +1,11 @@
 - debug using dap
 (pipenv shell) python -m debugpy --listen localhost:5678 -m src.api.http.entrypoint
+
+- example settings.json for development
+{
+    "LOCAL_NODE": {
+        "IDENTIFIER": "local",
+        "PUBLIC_KEY": "WHATEVER",
+        "ENDPOINT": "http://localhost:44777"
+    }
+}
