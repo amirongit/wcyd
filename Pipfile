@@ -8,13 +8,12 @@ aiohttp = "*"
 pydantic = {extras = ["email"], version = "*"}
 blacksheep = "*"
 redis = "*"
+uvicorn = {extras = ["standard"], version = "*"}
 
 [dev-packages]
 ipython = "*"
 mypy = "*"
-uvicorn = "*"
 debugpy = "*"
 
 [requires]
 python_version = "3.12"
-python_full_version = "3.12.3"
