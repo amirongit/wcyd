@@ -1,0 +1,29 @@
+services:
+  redis:
+    image: focker.ir/redis:7.2.5-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    ports:
+      - '6379:6379'
+    networks:
+      - wcyd
+
+  wcyd:
+    image: wcyd:0.0.0
+    command: uvicorn src.api.entrypoint:app --host 0.0.0.0 --port 44777
+    volumes:
+      - ../../settings.json:/app/settings.json
+    ports:
+      - '44777:44777'
+    networks:
+      - wcyd
+    depends_on:
+      - redis
+
+
+volumes:
+  redis-data:
+
+networks:
+  wcyd:
