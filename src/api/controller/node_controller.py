@@ -15,7 +15,11 @@ class NodeController(BaseController):
     def __init__(self, node_service: INodeService) -> None:
         self._node_service = node_service
 
-    @docs(tags=['nodes'], summary="register provided node as neighbor", responses={201: "registeration done successfully"})
+    @docs(
+        tags=['nodes'],
+        summary='register provided node as neighbor',
+        responses={201: 'registeration done successfully', 409: 'already connected'}
+    )
     @post('/')
     async def register(self, request_body: FromJSON[NodeConnectionRequest]) -> Response:
 
@@ -26,11 +30,11 @@ class NodeController(BaseController):
 
     @docs(
         tags=['nodes'],
-        summary="get all neighbors on this node",
-        responses={200: ResponseInfo("list of neighbors", content=[ContentInfo(list[NodeModel])])}
+        summary='get all neighbors on this node',
+        responses={200: ResponseInfo('list of neighbors', content=[ContentInfo(list[NodeModel])])}
     )
     @get('/')
-    async def get_list(self) -> Response:
+    async def get_neighbors(self) -> Response:
 
         neighbors = await self._node_service.get_neighbors()
 
@@ -43,11 +47,15 @@ class NodeController(BaseController):
 
     @docs(
         tags=['nodes'],
-        summary="get information of a node within the network which this node is a part of",
-        responses={200: ResponseInfo("information of the queried node", content=[ContentInfo(NodeModel)])}
+        summary='get information of a node within the network which this node is a part of',
+        responses={
+            200: ResponseInfo('information of the queried node', content=[ContentInfo(NodeModel)]),
+            404: 'not found',
+            409: 'already answered'
+        }
     )
     @get('/{identifier}')
-    async def get(self, identifier: FromRoute[str], questioners: FromQuery[set[str]]) -> Response:
+    async def get_node(self, identifier: FromRoute[str], questioners: FromQuery[set[str]]) -> Response:
 
         node = await self._node_service.find(questioners.value, identifier.value)
 

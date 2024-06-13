@@ -1,14 +1,7 @@
-class AlreadyConnected(Exception):
-    pass
+class AlreadyConnected(Exception): ...
 
 
-class AlreadyAnswered(Exception):
-    pass
+class AlreadyAnswered(Exception): ...
 
 
-class NotFound(Exception):
-    pass
-
-
-class SchemaNotSupported(Exception):
-    pass
+class NotFound(Exception): ...

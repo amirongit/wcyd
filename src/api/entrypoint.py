@@ -1,7 +1,7 @@
 from blacksheep import Application
 from uvicorn import run
 
-from src.api.wireup import inject_dependencies, register_controllers
+from src.api.wireup import inject_dependencies, register_controllers, register_exception_handlers
 from src.api.docs import docs
 
 
@@ -9,6 +9,7 @@ app = Application(show_error_details=True)
 
 app.on_start(inject_dependencies)
 app.on_start(register_controllers)
+app.on_start(register_exception_handlers)
 
 docs.bind_app(app)
 
