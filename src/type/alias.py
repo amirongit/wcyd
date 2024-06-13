@@ -1,4 +1,6 @@
-from typing import TypeAlias
+from pydantic.networks import HttpUrl
 
-Identifier: TypeAlias = str
-PublicKey: TypeAlias = str
+
+type Identifier = str
+type PublicKey = str
+type EndPoint = HttpUrl
