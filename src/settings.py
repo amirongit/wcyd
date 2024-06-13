@@ -2,6 +2,7 @@ from json import loads
 
 from pydantic.dataclasses import dataclass
 from pydantic.networks import AnyUrl
+from pydantic import RedisDsn
 
 
 @dataclass(kw_only=True)
@@ -12,8 +13,14 @@ class NodeSettings:
 
 
 @dataclass(kw_only=True)
+class RedisSettings:
+    DSN: RedisDsn
+
+
+@dataclass(kw_only=True)
 class Settings:
     LOCAL_NODE: NodeSettings
+    REDIS: RedisSettings
 
 
 SETTINGS: Settings

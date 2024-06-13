@@ -1,4 +1,6 @@
 from src.abc.infra.inode_client import INodeClient
+from src.type.alias import EndPoint, Identifier, PublicKey
+from src.type.entity import Node
 
 
 class NodeClient(INodeClient):
