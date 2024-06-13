@@ -5,12 +5,11 @@ name = "pypi"
 
 [packages]
 aiohttp = "*"
-grpcio = "*"
 pydantic = {extras = ["email"], version = "*"}
 blacksheep = "*"
+redis = "*"
 
 [dev-packages]
-grpcio-tools = "*"
 ipython = "*"
 mypy = "*"
 uvicorn = "*"
