@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+aiohttp = "*"
+pydantic = {extras = ["email"], version = "*"}
+blacksheep = "*"
+redis = "*"
+uvicorn = {extras = ["standard"], version = "*"}
+
+[dev-packages]
+ipython = "*"
+mypy = "*"
+debugpy = "*"
+
+[requires]
+python_version = "3.12"
