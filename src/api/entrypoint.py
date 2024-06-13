@@ -1,12 +1,10 @@
 from blacksheep import Application
-from blacksheep.server.openapi.v3 import OpenAPIHandler
-from openapidocs.v3 import Info
 from uvicorn import run
 
 from src.api.wireup import inject_dependencies, register_controllers
+from src.api.docs import docs
 
 
-docs = OpenAPIHandler(info=Info(title='WCYD', version='0'))
 app = Application(show_error_details=True)
 
 app.on_start(inject_dependencies)

@@ -8,3 +8,10 @@ class NodeConnectionRequest:
     identifier: Identifier
     endpoint: EndPoint
     public_key: PublicKey
+
+
+@dataclass(kw_only=True)
+class NodeModel:
+    identifier: str
+    endpoint: str
+    public_key: str

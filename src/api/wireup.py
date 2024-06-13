@@ -12,7 +12,7 @@ from src.settings import SETTINGS
 
 async def inject_dependencies(app: Application) -> None:
     app.services.add_instance(SETTINGS) # type: ignore
-    app.services.add_instance(Redis.from_url(str(SETTINGS.REDIS.DSN))) # type: ignore
+    app.services.add_instance(Redis.from_url(str(SETTINGS.REDIS.DSN), decode_responses=True)) # type: ignore
     app.services.add_singleton(INodeRepo, NodeRepo) # type: ignore
     app.services.add_singleton(INodeClient, NodeClient) # type: ignore
     app.services.add_singleton(INodeService, NodeService) # type: ignore

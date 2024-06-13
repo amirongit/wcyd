@@ -35,7 +35,7 @@ class NodeRepo(INodeRepo):
 
     async def all(self) -> list[Node]:
         return [
-            await self.get(key) for key in await self._connection.keys(
+            await self.get(key.removeprefix('node:')) for key in await self._connection.keys(
                 self._REDIS_KEY_NAMESPACE_.format(identifier='*')
             )
         ]
