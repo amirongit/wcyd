@@ -1,5 +1,5 @@
 - debug using dap
-(pipenv shell) python -m debugpy --listen localhost:5678 -m src.api.http.entrypoint
+(pipenv shell) python -m debugpy --listen localhost:5678 -m src.api.entrypoint
 
 - example settings.json for development
 {
