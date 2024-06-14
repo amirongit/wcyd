@@ -8,7 +8,7 @@ from src.type.entity import Node
 from src.type.exception import AlreadyExists, NotFound
 
 
-class NodeObjectModel(TypedDict):
+class RedisNodeObjectModel(TypedDict):
     endpoint: str
     public_key: str
 
@@ -33,7 +33,7 @@ class NodeRepo(INodeRepo):
         if await self.exists(identifier):
             raise AlreadyExists
 
-        obj: NodeObjectModel = {'endpoint': str(endpoint), 'public_key': public_key}
+        obj: RedisNodeObjectModel = {'endpoint': str(endpoint), 'public_key': public_key}
         await self._connection.hmset(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier), obj) # type: ignore
 
     async def all(self) -> list[Node]:
