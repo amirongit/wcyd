@@ -5,15 +5,16 @@ name = "pypi"
 
 [packages]
 aiohttp = "*"
-pydantic = {extras = ["email"], version = "*"}
+pydantic = {extras = ["email"] }
 blacksheep = "*"
 redis = "*"
-uvicorn = {extras = ["standard"], version = "*"}
+uvicorn = {extras = ["standard"] }
 
 [dev-packages]
 ipython = "*"
 mypy = "*"
 debugpy = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.12"
