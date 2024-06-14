@@ -14,7 +14,7 @@ PATHS = {
 }
 
 
-class APINodeObjectModel(TypedDict):
+class APIClientNodeObjectModel(TypedDict):
     identifier: str
     endpoint: str
     public_key: str
@@ -32,7 +32,7 @@ class NodeClient(INodeClient):
 
                     result: list[Node] = list()
 
-                    obj: APINodeObjectModel
+                    obj: APIClientNodeObjectModel
                     for obj in await resp.json():
                         result.append(
                             Node(
@@ -48,7 +48,7 @@ class NodeClient(INodeClient):
 
     async def connect(self, host: Node, identifier: Identifier, endpoint: EndPoint, public_key: PublicKey) -> None:
 
-        body: APINodeObjectModel = {'identifier': identifier, 'endpoint': str(endpoint), 'public_key': public_key}
+        body: APIClientNodeObjectModel = {'identifier': identifier, 'endpoint': str(endpoint), 'public_key': public_key}
 
         async with self._session as sess:
             async with sess.post(f'{host.endpoint}/{PATHS['REGISTER']}', json=body) as resp:
