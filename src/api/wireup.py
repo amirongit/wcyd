@@ -8,8 +8,11 @@ from src.abc.service.inode_service import INodeService
 from src.infra.node_client import NodeClient
 from src.infra.node_repo import NodeRepo
 from src.service.node_service import NodeService
-from src.settings import SETTINGS, NodeSettings
+from src.settings import NodeSettings, read_settings
 from src.type.exception import AlreadyAnswered, AlreadyExists, NotFound
+
+
+SETTINGS = read_settings()
 
 
 async def inject_dependencies(app: Application) -> None:
