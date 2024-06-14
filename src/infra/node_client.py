@@ -3,7 +3,7 @@ from aiohttp import ClientSession
 from src.abc.infra.inode_client import INodeClient
 from src.type.alias import EndPoint, Identifier, PublicKey
 from src.type.entity import Node
-from src.type.exception import AlreadyAnswered, AlreadyConnected, NotFound
+from src.type.exception import AlreadyAnswered, AlreadyExists, NotFound
 
 
 V000_PATHS = {
@@ -35,7 +35,7 @@ class NodeClientV000(INodeClient):
                     case 201:
                         return None
                     case 409:
-                        raise AlreadyConnected
+                        raise AlreadyExists
                     case _:
                         raise Exception
 

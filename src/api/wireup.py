@@ -9,7 +9,7 @@ from src.infra.node_client import NodeClientV000
 from src.infra.node_repo import NodeRepo
 from src.service.node_service import NodeService
 from src.settings import SETTINGS
-from src.type.exception import AlreadyAnswered, AlreadyConnected, NotFound
+from src.type.exception import AlreadyAnswered, AlreadyExists, NotFound
 
 
 async def inject_dependencies(app: Application) -> None:
@@ -31,11 +31,11 @@ async def register_exception_handlers(app: Application) -> None:
     async def handle_already_connected(
         self,
         request: Request,
-        exc: AlreadyConnected | Type[AlreadyConnected]
+        exc: AlreadyExists | Type[AlreadyExists]
     ) -> Response:
         return Response(status=409)
 
-    app.exceptions_handlers[AlreadyConnected] = handle_already_connected
+    app.exceptions_handlers[AlreadyExists] = handle_already_connected
 
     async def handle_already_answered(
         self,
