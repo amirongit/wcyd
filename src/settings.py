@@ -23,6 +23,6 @@ class Settings:
     REDIS: RedisSettings
 
 
-SETTINGS: Settings
-with open('./settings.json', 'r') as f:
-    SETTINGS = Settings(**loads(f.read()))
+def read_settings() -> Settings:
+    with open('./settings.json', 'r') as f:
+        return Settings(**loads(f.read()))
