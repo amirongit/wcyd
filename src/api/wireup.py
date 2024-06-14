@@ -8,7 +8,7 @@ from src.abc.service.inode_service import INodeService
 from src.infra.node_client import NodeClient
 from src.infra.node_repo import NodeRepo
 from src.service.node_service import NodeService
-from src.settings import SETTINGS
+from src.settings import SETTINGS, NodeSettings
 from src.type.exception import AlreadyAnswered, AlreadyExists, NotFound
 
 
@@ -18,7 +18,7 @@ async def inject_dependencies(app: Application) -> None:
 
     app.services.add_scoped(INodeClient, NodeClient) # type: ignore
 
-    app.services.add_instance(SETTINGS) # type: ignore
+    app.services.add_instance(SETTINGS.LOCAL_NODE, NodeSettings) # type: ignore
     app.services.add_singleton(INodeService, NodeService) # type: ignore
 
 
