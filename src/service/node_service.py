@@ -3,17 +3,17 @@ from src.abc.infra.inode_client import INodeClient
 from src.abc.infra.inode_repo import INodeRepo
 from src.type.alias import EndPoint, Identifier, PublicKey
 from src.type.entity import Node
-from src.type.exception import AlreadyAnswered, AlreadyConnected, NotFound
+from src.type.exception import AlreadyAnswered, AlreadyExists, NotFound
 
-from src.settings import Settings
+from src.settings import NodeSettings
 
 
 class NodeService(INodeService):
-    def __init__(self, settings: Settings, node_repo: INodeRepo, node_client: INodeClient):
+    def __init__(self, node_settings: NodeSettings, node_repo: INodeRepo, node_client: INodeClient):
         self._local_node = Node(
-            identifier=settings.LOCAL_NODE.IDENTIFIER,
-            endpoint=settings.LOCAL_NODE.ENDPOINT,
-            public_key=settings.LOCAL_NODE.PUBLIC_KEY
+            identifier=node_settings.IDENTIFIER,
+            endpoint=node_settings.ENDPOINT,
+            public_key=node_settings.PUBLIC_KEY
         )
         self._node_repo = node_repo
         self._node_client = node_client
@@ -26,9 +26,6 @@ class NodeService(INodeService):
         return await self._node_repo.all()
 
     async def connect(self, identifier: Identifier, endpoint: EndPoint, public_key: PublicKey) -> None:
-        if await self._node_repo.exists(identifier):
-            raise AlreadyConnected
-
         await self._node_repo.create(identifier, endpoint, public_key)
 
         try:
@@ -38,7 +35,7 @@ class NodeService(INodeService):
                 self.local_node.endpoint,
                 self.local_node.public_key,
             )
-        except AlreadyConnected:
+        except AlreadyExists:
             pass
 
     async def find(self, questioners: set[Identifier], identifier: Identifier) -> Node:
