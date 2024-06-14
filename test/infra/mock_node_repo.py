@@ -6,7 +6,7 @@ from src.type.entity import Node
 from src.type.exception import AlreadyExists, NotFound
 
 
-class MockNodeObjectModel(TypedDict):
+class MockRepoNodeObjectModel(TypedDict):
     endpoint: str
     public_key: str
 
@@ -14,7 +14,7 @@ class MockNodeObjectModel(TypedDict):
 class MockNodeRepo(INodeRepo):
 
     def __init__(self) -> None:
-        self._mem_storage: dict[Identifier, MockNodeObjectModel] = dict()
+        self._mem_storage: dict[Identifier, MockRepoNodeObjectModel] = dict()
 
     async def get(self, identifier: Identifier) -> Node:
         if (obj := self._mem_storage.get(identifier)) is not None:
