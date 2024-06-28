@@ -1,13 +1,14 @@
 from typing import TypedDict
+
+from pydantic.networks import AnyUrl
 from src.abc.infra.inode_client import INodeClient
-from src.type.alias import EndPoint, Identifier, PublicKey
+from src.type.alias import EndPoint, Identifier
 from src.type.entity import Node
 from src.type.exception import AlreadyAnswered, AlreadyExists, NotFound
 
 
 class MockClientNodeObjectModel(TypedDict):
     endpoint: str
-    public_key: str
 
 
 class MockNodeClient(INodeClient):
@@ -20,14 +21,13 @@ class MockNodeClient(INodeClient):
             return [
                 Node(
                     identifier=k,
-                    endpoint=v['endpoint'], # type: ignore
-                    public_key=v['public_key']
+                    endpoint=AnyUrl(v['endpoint']),
                 ) for k, v in self._mem_storage[host.identifier].items()
             ]
         except KeyError as e:
             raise Exception from e
 
-    async def connect(self, host: Node, identifier: Identifier, endpoint: EndPoint, public_key: PublicKey) -> None:
+    async def connect(self, host: Node, identifier: Identifier, endpoint: EndPoint) -> None:
         if host.identifier in self._mem_storage:
             raise AlreadyExists
 
@@ -40,7 +40,7 @@ class MockNodeClient(INodeClient):
         try:
             if (obj := self._mem_storage[host.identifier].get(identifier)) is None:
                 raise NotFound
-            return Node(identifier=identifier, endpoint=obj['endpoint'], public_key=obj['public_key']) # type: ignore
+            return Node(identifier=identifier, endpoint=AnyUrl(obj['endpoint']))
         except KeyError as e:
             raise Exception from e
 

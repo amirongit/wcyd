@@ -8,7 +8,6 @@ from pydantic import RedisDsn
 @dataclass(kw_only=True)
 class NodeSettings:
     IDENTIFIER: str
-    PUBLIC_KEY: str
     ENDPOINT: AnyUrl
 
 

@@ -1,14 +1,15 @@
 from typing import TypedDict
 
+from pydantic.networks import AnyUrl
+
 from src.abc.infra.inode_repo import INodeRepo
-from src.type.alias import EndPoint, Identifier, PublicKey
+from src.type.alias import EndPoint, Identifier
 from src.type.entity import Node
 from src.type.exception import AlreadyExists, NotFound
 
 
 class MockRepoNodeObjectModel(TypedDict):
     endpoint: str
-    public_key: str
 
 
 class MockNodeRepo(INodeRepo):
@@ -25,17 +26,16 @@ class MockNodeRepo(INodeRepo):
     async def exists(self, identifier: Identifier) -> bool:
         return identifier in self._mem_storage
 
-    async def create(self, identifier: Identifier, endpoint: EndPoint, public_key: PublicKey) -> None:
+    async def create(self, identifier: Identifier, endpoint: EndPoint) -> None:
         if await self.exists(identifier):
             raise AlreadyExists
 
-        self._mem_storage[identifier] = {'endpoint': str(endpoint), 'public_key': public_key}
+        self._mem_storage[identifier] = {'endpoint': str(endpoint)}
 
     async def all(self) -> list[Node]:
         return [
             Node(
                 identifier=k,
-                endpoint=v['endpoint'], # type: ignore
-                public_key=v['public_key']
+                endpoint=AnyUrl(v['endpoint']),
             ) for k, v in self._mem_storage.items()
         ]

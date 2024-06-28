@@ -1,7 +1,7 @@
 from src.abc.service.inode_service import INodeService
 from src.abc.infra.inode_client import INodeClient
 from src.abc.infra.inode_repo import INodeRepo
-from src.type.alias import EndPoint, Identifier, PublicKey
+from src.type.alias import EndPoint, Identifier
 from src.type.entity import Node
 from src.type.exception import AlreadyAnswered, AlreadyExists, NotFound
 
@@ -13,7 +13,6 @@ class NodeService(INodeService):
         self._local_node = Node(
             identifier=node_settings.IDENTIFIER,
             endpoint=node_settings.ENDPOINT,
-            public_key=node_settings.PUBLIC_KEY
         )
         self._node_repo = node_repo
         self._node_client = node_client
@@ -25,15 +24,14 @@ class NodeService(INodeService):
     async def get_neighbors(self) -> list[Node]:
         return await self._node_repo.all()
 
-    async def connect(self, identifier: Identifier, endpoint: EndPoint, public_key: PublicKey) -> None:
-        await self._node_repo.create(identifier, endpoint, public_key)
+    async def connect(self, identifier: Identifier, endpoint: EndPoint) -> None:
+        await self._node_repo.create(identifier, endpoint)
 
         try:
             await self._node_client.connect(
                 await self._node_repo.get(identifier),
                 self.local_node.identifier,
                 self.local_node.endpoint,
-                self.local_node.public_key,
             )
         except AlreadyExists:
             pass
