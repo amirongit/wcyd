@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from src.type.entity import Node
-from src.type.alias import EndPoint, Identifier, PublicKey
+from src.type.alias import EndPoint, Identifier
 
 
 class INodeRepo(ABC):
@@ -13,7 +13,7 @@ class INodeRepo(ABC):
     async def exists(self, identifier: Identifier) -> bool: ...
 
     @abstractmethod
-    async def create(self, identifier: Identifier, endpoint: EndPoint, public_key: PublicKey) -> None: ...
+    async def create(self, identifier: Identifier, endpoint: EndPoint) -> None: ...
 
     @abstractmethod
     async def all(self) -> list[Node]: ...

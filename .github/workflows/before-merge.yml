@@ -23,5 +23,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pipenv
           pipenv sync --system --dev
-      - run: mypy -v ./src
+      - run: echo 'running mypy (static type checker)
+      - run: mypy ./src
+      - run: echo 'running pytest (unit test framework)
       - run: pytest -v

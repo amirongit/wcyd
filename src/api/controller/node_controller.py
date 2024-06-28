@@ -24,7 +24,7 @@ class NodeController(BaseController):
     async def register(self, request_body: FromJSON[NodeConnectionRequest]) -> Response:
 
         serialized = request_body.value
-        await self._node_service.connect(serialized.identifier, serialized.endpoint, serialized.public_key)
+        await self._node_service.connect(serialized.identifier, serialized.endpoint)
 
         return self.created()
 
@@ -40,7 +40,7 @@ class NodeController(BaseController):
 
         return self.ok(
             [
-                NodeModel(identifier=node.identifier, endpoint=str(node.endpoint), public_key=node.public_key)
+                NodeModel(identifier=node.identifier, endpoint=str(node.endpoint))
                 for node in neighbors
             ]
         )
@@ -59,4 +59,4 @@ class NodeController(BaseController):
 
         node = await self._node_service.find(questioners.value, identifier.value)
 
-        return self.ok(NodeModel(identifier=node.identifier, endpoint=str(node.endpoint), public_key=node.public_key))
+        return self.ok(NodeModel(identifier=node.identifier, endpoint=str(node.endpoint)))
