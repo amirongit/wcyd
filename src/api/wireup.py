@@ -33,16 +33,17 @@ async def register_controllers(app: Application) -> None:
 async def register_exception_handlers(app: Application) -> None:
 
     async def handle_already_connected(
-        self,
+        self: Application,
         request: Request,
         exc: AlreadyExists | Type[AlreadyExists]
     ) -> Response:
         return Response(status=409)
 
+
     app.exceptions_handlers[AlreadyExists] = handle_already_connected
 
     async def handle_already_answered(
-        self,
+        self: Application,
         request: Request,
         exc: AlreadyAnswered | Type[AlreadyAnswered]
     ) -> Response:
@@ -51,7 +52,7 @@ async def register_exception_handlers(app: Application) -> None:
     app.exceptions_handlers[AlreadyAnswered] = handle_already_connected
 
     async def handle_not_found(
-        self,
+        self: Application,
         request: Request,
         exc: NotFound | Type[NotFound]
     ) -> Response:
