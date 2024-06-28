@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from src.type.entity import Node
-from src.type.alias import EndPoint, Identifier
+from src.type.internal import EndPoint, Identifier
 
 
 class INodeRepo(ABC):

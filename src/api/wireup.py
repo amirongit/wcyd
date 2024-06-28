@@ -29,6 +29,7 @@ async def register_controllers(app: Application) -> None:
     from src.api.controller.node_controller import NodeController
 
 
+# TODO: add pydantic validation exception handlers
 async def register_exception_handlers(app: Application) -> None:
 
     async def handle_already_connected(
