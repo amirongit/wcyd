@@ -2,7 +2,7 @@ from typing import TypedDict
 
 from pydantic.networks import AnyUrl
 from src.abc.infra.inode_client import INodeClient
-from src.type.alias import EndPoint, Identifier
+from src.type.internal import EndPoint, Identifier
 from src.type.entity import Node
 from src.type.exception import AlreadyAnswered, AlreadyExists, NotFound
 

@@ -9,7 +9,7 @@ from src.settings import NodeSettings
 
 
 class NodeService(INodeService):
-    def __init__(self, node_settings: NodeSettings, node_repo: INodeRepo, node_client: INodeClient):
+    def __init__(self, node_settings: NodeSettings, node_repo: INodeRepo, node_client: INodeClient) -> None:
         self._local_node = Node(
             identifier=node_settings.IDENTIFIER,
             endpoint=node_settings.ENDPOINT,

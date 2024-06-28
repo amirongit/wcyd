@@ -1,8 +1,7 @@
 from json import loads
 
 from pydantic.dataclasses import dataclass
-from pydantic.networks import AnyUrl
-from pydantic import RedisDsn
+from pydantic import AnyUrl, RedisDsn
 
 
 @dataclass(kw_only=True)

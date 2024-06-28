@@ -1,7 +1,7 @@
 from src.abc.infra.inode_client import INodeClient
 from src.abc.service.inode_service import INodeService
 from src.service.node_service import NodeService
-from src.type.alias import EndPoint, Identifier
+from src.type.internal import EndPoint, Identifier
 from test.mock.infra.mock_node_client import MockNodeClient
 
 
