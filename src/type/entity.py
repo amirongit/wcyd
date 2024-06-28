@@ -1,14 +1,15 @@
 from pydantic.dataclasses import dataclass
 
-from src.type.internal import Identifier, EndPoint
+from src.type.internal import NodeIdentifier, EndPoint, PublicKey, UniversalPeerIdentifier
 
 
 @dataclass(kw_only=True)
 class Node:
-    identifier: Identifier
+    identifier: NodeIdentifier
     endpoint: EndPoint
 
 
 @dataclass(kw_only=True)
 class Peer:
-    pass
+    identifier: UniversalPeerIdentifier
+    public_key: PublicKey

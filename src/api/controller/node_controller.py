@@ -21,29 +21,12 @@ class NodeController(BaseController):
         responses={201: 'registeration done successfully', 409: 'already connected'}
     )
     @post('/')
-    async def register(self, request_body: FromJSON[NodeConnectionRequest]) -> Response:
+    async def register_node(self, request_body: FromJSON[NodeConnectionRequest]) -> Response:
 
         serialized = request_body.value
         await self._node_service.connect(serialized.identifier, serialized.endpoint)
 
         return self.created()
-
-    @docs(
-        tags=['nodes'],
-        summary='get all neighbors on this node',
-        responses={200: ResponseInfo('list of neighbors', content=[ContentInfo(list[NodeModel])])}
-    )
-    @get('/')
-    async def get_neighbors(self) -> Response:
-
-        neighbors = await self._node_service.get_neighbors()
-
-        return self.ok(
-            [
-                NodeModel(identifier=node.identifier, endpoint=str(node.endpoint))
-                for node in neighbors
-            ]
-        )
 
     @docs(
         tags=['nodes'],

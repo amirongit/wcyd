@@ -1,5 +1,5 @@
 import re
-from typing import TypeAlias, Self
+from typing import NamedTuple, TypeAlias, Self
 
 from pydantic import AnyUrl, ValidationError, model_validator
 from pydantic.dataclasses import dataclass
@@ -7,8 +7,14 @@ from pydantic.dataclasses import dataclass
 from src.type.enum import AsymmetricCryptographyProvider
 
 
-Identifier: TypeAlias = str
+NodeIdentifier: TypeAlias = str
+PeerIdentifier: TypeAlias = str
 EndPoint: TypeAlias = AnyUrl
+
+
+class UniversalPeerIdentifier(NamedTuple):
+    node: NodeIdentifier
+    peer: PeerIdentifier
 
 
 @dataclass(kw_only=True)
