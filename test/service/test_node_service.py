@@ -24,16 +24,6 @@ class TestNodeService(IsolatedAsyncioTestCase):
         self.assertEqual(self._node_service.local_node.identifier, TestNodeService.TEST_NODE_SETTINGS.IDENTIFIER)
         self.assertEqual(self._node_service.local_node.endpoint, TestNodeService.TEST_NODE_SETTINGS.ENDPOINT)
 
-    async def test_get_neighbors(self) -> None:
-        with self.subTest():
-            neighbors = await self._node_service.get_neighbors()
-            self.assertEqual(len(neighbors), 0)
-
-        with self.subTest():
-            await self._node_service.connect('test-neighbor', AnyUrl('http://neighbor:80'))
-            neighbors = await self._node_service.get_neighbors()
-            self.assertEqual(len(neighbors), 1)
-
     async def test_connect(self) -> None:
         neighbor_identifier = 'test-neighbor'
         neighbor_endpoint = AnyUrl('http://neighbor:80')
@@ -43,11 +33,10 @@ class TestNodeService(IsolatedAsyncioTestCase):
             await self._node_service.connect(neighbor_identifier, neighbor_endpoint)
 
         with self.subTest():
-            neighbors = await self._node_service.get_neighbors()
+            neighbor = await self._node_service.find({'an-stranger'}, neighbor_identifier)
 
-            self.assertEqual(len(neighbors), 1)
-            self.assertEqual(neighbors[0].identifier, neighbor_identifier)
-            self.assertEqual(neighbors[0].endpoint, neighbor_endpoint)
+            self.assertEqual(neighbor.identifier, neighbor_identifier)
+            self.assertEqual(neighbor.endpoint, neighbor_endpoint)
 
     async def test_find(self) -> None:
         with self.assertRaises(AlreadyAnswered):
@@ -56,10 +45,6 @@ class TestNodeService(IsolatedAsyncioTestCase):
         neighbor_identifier = 'test-neighbor'
         neighbor_endpoint = AnyUrl('http://neighbor:80')
         await self._node_service.connect(neighbor_identifier, neighbor_endpoint)
-
-        with self.subTest():
-            direct_neighbors = await self._node_service.get_neighbors()
-            self.assertIn(neighbor_identifier, [n.identifier for n in direct_neighbors])
 
         with self.subTest():
             found_node = await self._node_service.find({'another-test-neighbor'}, neighbor_identifier)
@@ -75,11 +60,6 @@ class TestNodeService(IsolatedAsyncioTestCase):
             far_neighbor_identifier,
             far_neighbor_endpoint,
         )
-
-
-        with self.subTest():
-            direct_neighbors = await self._node_service.get_neighbors()
-            self.assertNotIn(far_neighbor_identifier, [n.identifier for n in direct_neighbors])
 
         with self.subTest():
             found_node = await self._node_service.find({'another-test-neighbor'}, far_neighbor_identifier)
