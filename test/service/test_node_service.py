@@ -4,7 +4,7 @@ from pydantic.networks import AnyUrl
 
 from src.service.node_service import NodeService
 from src.settings import NodeSettings
-from src.type.exception import AlreadyAnswered, AlreadyExists, NotFound
+from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
 from test.mock.infra.mock_node_client import MockNodeClient
 from test.mock.infra.mock_node_repo import MockNodeRepo
 from test.utils import create_far_neighbor
@@ -67,5 +67,5 @@ class TestNodeService(IsolatedAsyncioTestCase):
             self.assertEqual(found_node.identifier, far_neighbor_identifier)
             self.assertEqual(found_node.endpoint, far_neighbor_endpoint)
 
-        with self.assertRaises(NotFound):
+        with self.assertRaises(DoesNotExist):
             await self._node_service.find({'test-neighbor'}, 'not-existing-node')

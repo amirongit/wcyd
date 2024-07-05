@@ -5,7 +5,7 @@ from pydantic.networks import AnyUrl
 from src.abc.infra.inode_repo import INodeRepo
 from src.type.internal import EndPoint, NodeIdentifier
 from src.type.entity import Node
-from src.type.exception import AlreadyExists, NotFound
+from src.type.exception import AlreadyExists, DoesNotExist
 
 
 class MockRepoNodeObjectModel(TypedDict):
@@ -21,7 +21,7 @@ class MockNodeRepo(INodeRepo):
         if (obj := self._mem_storage.get(identifier)) is not None:
             return Node(identifier=identifier, **obj) # type: ignore
 
-        raise NotFound
+        raise DoesNotExist
 
     async def exists(self, identifier: NodeIdentifier) -> bool:
         return identifier in self._mem_storage

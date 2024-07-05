@@ -4,7 +4,7 @@ from pydantic.networks import AnyUrl
 from src.abc.infra.inode_client import INodeClient
 from src.type.internal import EndPoint, NodeIdentifier
 from src.type.entity import Node
-from src.type.exception import AlreadyAnswered, AlreadyExists, NotFound
+from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
 
 
 class MockClientNodeObjectModel(TypedDict):
@@ -39,7 +39,7 @@ class MockNodeClient(INodeClient):
 
         try:
             if (obj := self._mem_storage[host.identifier].get(identifier)) is None:
-                raise NotFound
+                raise DoesNotExist
             return Node(identifier=identifier, endpoint=AnyUrl(obj['endpoint']))
         except KeyError as e:
             raise Exception from e
