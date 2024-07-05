@@ -12,7 +12,8 @@ PeerIdentifier: TypeAlias = str
 EndPoint: TypeAlias = AnyUrl
 
 
-class UniversalPeerIdentifier(NamedTuple):
+@dataclass(kw_only=True)
+class UniversalPeerIdentifier:
     node: NodeIdentifier
     peer: PeerIdentifier
 
@@ -23,7 +24,7 @@ class PublicKey:
     value: str
 
     @model_validator(mode='after')
-    def v(self: Self) -> Self:
+    def _v(self: Self) -> Self:
         match self.provider:
             case AsymmetricCryptographyProvider.SSH:
                 self._validate_ssh_pub_key(self.value)

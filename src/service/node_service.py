@@ -3,7 +3,7 @@ from src.abc.infra.inode_client import INodeClient
 from src.abc.infra.inode_repo import INodeRepo
 from src.type.internal import EndPoint, NodeIdentifier
 from src.type.entity import Node
-from src.type.exception import AlreadyAnswered, AlreadyExists, NotFound
+from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
 
 from src.settings import NodeSettings
 
@@ -39,12 +39,12 @@ class NodeService(INodeService):
 
         try:
             return await self._node_repo.get(identifier)
-        except NotFound:
+        except DoesNotExist:
             new_questioners = questioners | {self.local_node.identifier}
             for node in await self._node_repo.all():
                 try:
                     return await self._node_client.find(node, new_questioners, identifier)
-                except (NotFound, AlreadyAnswered):
+                except (DoesNotExist, AlreadyAnswered):
                     new_questioners.add(node.identifier)
 
-        raise NotFound
+        raise DoesNotExist

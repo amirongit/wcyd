@@ -9,7 +9,7 @@ from src.infra.node_client import NodeClient
 from src.infra.node_repo import NodeRepo
 from src.service.node_service import NodeService
 from src.settings import NodeSettings, read_settings
-from src.type.exception import AlreadyAnswered, AlreadyExists, NotFound
+from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
 
 
 SETTINGS = read_settings()
@@ -54,8 +54,8 @@ async def register_exception_handlers(app: Application) -> None:
     async def handle_not_found(
         self: Application,
         request: Request,
-        exc: NotFound | Type[NotFound]
+        exc: DoesNotExist | Type[DoesNotExist]
     ) -> Response:
         return not_found()
 
-    app.exceptions_handlers[NotFound] = handle_already_connected
+    app.exceptions_handlers[DoesNotExist] = handle_already_connected

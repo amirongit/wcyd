@@ -5,7 +5,7 @@ from pydantic.networks import AnyUrl
 from src.abc.infra.inode_client import INodeClient
 from src.type.internal import EndPoint, NodeIdentifier
 from src.type.entity import Node
-from src.type.exception import AlreadyAnswered, AlreadyExists, NotFound
+from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
 
 
 class APIClientNodeObjectModel(TypedDict):
@@ -55,7 +55,7 @@ class NodeClient(INodeClient):
                     case 200:
                         return Node(**await resp.json())
                     case 404:
-                        raise NotFound
+                        raise DoesNotExist
                     case 409:
                         raise AlreadyAnswered
                     case _:
