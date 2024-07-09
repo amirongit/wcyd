@@ -1,5 +1,5 @@
 import re
-from typing import NamedTuple, TypeAlias, Self
+from typing import TypeAlias, Self
 
 from pydantic import AnyUrl, ValidationError, model_validator
 from pydantic.dataclasses import dataclass
@@ -31,7 +31,7 @@ class PublicKey:
             case AsymmetricCryptographyProvider.GPG:
                 self._validate_gpg_pub_key(self.value)
             case _:
-                raise ValidationError
+                raise ValueError
 
         return self
 
@@ -42,7 +42,7 @@ class PublicKey:
             r'-z0-9+/]+[=]{0,3})\s+(.+)$',
             key
         ):
-            raise ValidationError
+            raise ValueError
 
     @staticmethod
     def _validate_gpg_pub_key(key: str) -> None:
@@ -50,4 +50,4 @@ class PublicKey:
             r'^-----BEGIN PGP PUBLIC KEY BLOCK-----\s+(Version: .+\s+)?(.+\s+)+-----END PGP PUBLIC KEY BLOCK-----$',
             key
         ):
-            raise ValidationError
+            raise ValueError
