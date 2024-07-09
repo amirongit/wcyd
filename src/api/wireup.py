@@ -4,10 +4,14 @@ from redis.asyncio import Redis
 
 from src.abc.infra.inode_client import INodeClient
 from src.abc.infra.inode_repo import INodeRepo
+from src.abc.infra.ipeer_repo import IPeerRepo
 from src.abc.service.inode_service import INodeService
+from src.abc.service.ipeer_service import IPeerService
 from src.infra.node_client import NodeClient
 from src.infra.node_repo import NodeRepo
+from src.infra.peer_repo import PeerRepo
 from src.service.node_service import NodeService
+from src.service.peer_service import PeerService
 from src.settings import NodeSettings, read_settings
 from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
 
@@ -18,29 +22,30 @@ SETTINGS = read_settings()
 async def inject_dependencies(app: Application) -> None:
     app.services.add_instance(Redis.from_url(str(SETTINGS.REDIS.DSN), decode_responses=True)) # type: ignore
     app.services.add_singleton(INodeRepo, NodeRepo) # type: ignore
+    app.services.add_singleton(IPeerRepo, PeerRepo) # type: ignore
 
     app.services.add_scoped(INodeClient, NodeClient) # type: ignore
 
     app.services.add_instance(SETTINGS.LOCAL_NODE, NodeSettings) # type: ignore
     app.services.add_singleton(INodeService, NodeService) # type: ignore
+    app.services.add_singleton(IPeerService, PeerService) # type: ignore
 
 
 async def register_controllers(app: Application) -> None:
     from src.api.controller.node_controller import NodeController
+    from src.api.controller.peer_controller import PeerController
 
 
-# TODO: add pydantic validation exception handlers
 async def register_exception_handlers(app: Application) -> None:
 
-    async def handle_already_connected(
+    async def handle_already_exists(
         self: Application,
         request: Request,
         exc: AlreadyExists | Type[AlreadyExists]
     ) -> Response:
         return Response(status=409)
 
-
-    app.exceptions_handlers[AlreadyExists] = handle_already_connected
+    app.exceptions_handlers[AlreadyExists] = handle_already_exists
 
     async def handle_already_answered(
         self: Application,
@@ -49,7 +54,7 @@ async def register_exception_handlers(app: Application) -> None:
     ) -> Response:
         return Response(status=409)
 
-    app.exceptions_handlers[AlreadyAnswered] = handle_already_connected
+    app.exceptions_handlers[AlreadyAnswered] = handle_already_answered
 
     async def handle_not_found(
         self: Application,
@@ -58,4 +63,4 @@ async def register_exception_handlers(app: Application) -> None:
     ) -> Response:
         return not_found()
 
-    app.exceptions_handlers[DoesNotExist] = handle_already_connected
+    app.exceptions_handlers[DoesNotExist] = handle_not_found
