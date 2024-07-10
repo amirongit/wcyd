@@ -10,7 +10,7 @@ class MockRepoPeerObjectModel(TypedDict):
 
 
 class MockPeerRepo(IPeerRepo):
-    def __init__(self):
+    def __init__(self) -> None:
         self._mem_storage: dict[PeerIdentifier, MockRepoPeerObjectModel] = dict()
 
     async def exists(self, identifier: PeerIdentifier) -> bool:
