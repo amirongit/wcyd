@@ -1,5 +1,5 @@
-from blacksheep.server.controllers import post, get
 from blacksheep import FromJSON, FromRoute, FromQuery, Response
+from blacksheep.server.controllers import post, get
 from blacksheep.server.openapi.common import ContentInfo, ResponseInfo
 
 from src.abc.service.inode_service import INodeService
@@ -21,29 +21,12 @@ class NodeController(BaseController):
         responses={201: 'registeration done successfully', 409: 'already connected'}
     )
     @post('/')
-    async def register(self, request_body: FromJSON[NodeConnectionRequest]) -> Response:
+    async def register_node(self, request_body: FromJSON[NodeConnectionRequest]) -> Response:
 
         serialized = request_body.value
-        await self._node_service.connect(serialized.identifier, serialized.endpoint, serialized.public_key)
+        await self._node_service.connect(serialized.identifier, serialized.endpoint)
 
         return self.created()
-
-    @docs(
-        tags=['nodes'],
-        summary='get all neighbors on this node',
-        responses={200: ResponseInfo('list of neighbors', content=[ContentInfo(list[NodeModel])])}
-    )
-    @get('/')
-    async def get_neighbors(self) -> Response:
-
-        neighbors = await self._node_service.get_neighbors()
-
-        return self.ok(
-            [
-                NodeModel(identifier=node.identifier, endpoint=str(node.endpoint), public_key=node.public_key)
-                for node in neighbors
-            ]
-        )
 
     @docs(
         tags=['nodes'],
@@ -59,4 +42,4 @@ class NodeController(BaseController):
 
         node = await self._node_service.find(questioners.value, identifier.value)
 
-        return self.ok(NodeModel(identifier=node.identifier, endpoint=str(node.endpoint), public_key=node.public_key))
+        return self.ok(NodeModel(identifier=node.identifier, endpoint=str(node.endpoint)))

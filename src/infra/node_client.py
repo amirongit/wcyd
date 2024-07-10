@@ -1,23 +1,16 @@
 from typing import TypedDict
 from aiohttp import ClientSession
+from pydantic.networks import AnyUrl
 
 from src.abc.infra.inode_client import INodeClient
-from src.type.alias import EndPoint, Identifier, PublicKey
+from src.type.internal import EndPoint, NodeIdentifier
 from src.type.entity import Node
-from src.type.exception import AlreadyAnswered, AlreadyExists, NotFound
-
-
-PATHS = {
-    'GET_NEIGHBORS': '/nodes',
-    'GET_NODE': '/nodes/{identifier}',
-    'REGISTER': '/nodes',
-}
+from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
 
 
 class APIClientNodeObjectModel(TypedDict):
     identifier: str
     endpoint: str
-    public_key: str
 
 
 class NodeClient(INodeClient):
@@ -27,31 +20,25 @@ class NodeClient(INodeClient):
 
     async def get_neighbors(self, host: Node) -> list[Node]:
         async with self._session as sess:
-            async with sess.get(f'{host.endpoint}/{PATHS['GET_NEIGHBORS']}') as resp:
+            async with sess.get(f'{host.endpoint}/nodes') as resp:
                 if resp.status == 200:
 
                     result: list[Node] = list()
 
                     obj: APIClientNodeObjectModel
                     for obj in await resp.json():
-                        result.append(
-                            Node(
-                                identifier=obj['identifier'],
-                                endpoint=obj['endpoint'], # type: ignore
-                                public_key=obj['public_key']
-                            )
-                        )
+                        result.append(Node(identifier=obj['identifier'], endpoint=AnyUrl(obj['endpoint'])))
 
                     return result
 
         raise Exception
 
-    async def connect(self, host: Node, identifier: Identifier, endpoint: EndPoint, public_key: PublicKey) -> None:
+    async def connect(self, host: Node, identifier: NodeIdentifier, endpoint: EndPoint) -> None:
 
-        body: APIClientNodeObjectModel = {'identifier': identifier, 'endpoint': str(endpoint), 'public_key': public_key}
+        body: APIClientNodeObjectModel = {'identifier': identifier, 'endpoint': str(endpoint)}
 
         async with self._session as sess:
-            async with sess.post(f'{host.endpoint}/{PATHS['REGISTER']}', json=body) as resp:
+            async with sess.post(f'{host.endpoint}/nodes', json=body) as resp:
                 match resp.status:
                     case 201:
                         return None
@@ -60,17 +47,15 @@ class NodeClient(INodeClient):
                     case _:
                         raise Exception
 
-    async def find(self, host: Node, questioners: set[Identifier], identifier: Identifier) -> Node:
+    async def find(self, host: Node, questioners: set[NodeIdentifier], identifier: NodeIdentifier) -> Node:
         async with self._session as sess:
-            async with sess.get(
-                f'{host.endpoint}/{PATHS['GET_NODE']}'.format(identifier=identifier),
-                params={'questioners': questioners}
+            async with sess.get(f'{host.endpoint}/nodes/{identifier}', params={'questioners': questioners}
             ) as resp:
                 match resp.status:
                     case 200:
                         return Node(**await resp.json())
                     case 404:
-                        raise NotFound
+                        raise DoesNotExist
                     case 409:
                         raise AlreadyAnswered
                     case _:

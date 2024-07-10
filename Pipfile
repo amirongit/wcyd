@@ -9,6 +9,7 @@ pydantic = {extras = ["email"] }
 blacksheep = "*"
 redis = "*"
 uvicorn = {extras = ["standard"] }
+mypy = "*"
 
 [dev-packages]
 ipython = "*"

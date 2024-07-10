@@ -1,17 +1,15 @@
 from pydantic.dataclasses import dataclass
 
-from src.type.alias import EndPoint, Identifier, PublicKey
+from src.type.internal import EndPoint, NodeIdentifier
 
 
 @dataclass(kw_only=True)
 class NodeConnectionRequest:
-    identifier: Identifier
+    identifier: NodeIdentifier
     endpoint: EndPoint
-    public_key: PublicKey
 
 
 @dataclass(kw_only=True)
 class NodeModel:
     identifier: str
     endpoint: str
-    public_key: str
