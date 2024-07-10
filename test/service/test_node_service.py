@@ -20,7 +20,7 @@ class TestNodeService(IsolatedAsyncioTestCase):
     def setUp(self) -> None:
         self._node_service = NodeService(TestNodeService.TEST_NODE_SETTINGS, MockNodeRepo(), MockNodeClient())
 
-    def test_local_node(self) -> None:
+    async def test_local_node(self) -> None:
         self.assertEqual(self._node_service.local_node.identifier, TestNodeService.TEST_NODE_SETTINGS.IDENTIFIER)
         self.assertEqual(self._node_service.local_node.endpoint, TestNodeService.TEST_NODE_SETTINGS.ENDPOINT)
 
@@ -29,8 +29,9 @@ class TestNodeService(IsolatedAsyncioTestCase):
         neighbor_endpoint = AnyUrl('http://neighbor:80')
         await self._node_service.connect(neighbor_identifier, neighbor_endpoint)
 
-        with self.assertRaises(AlreadyExists):
-            await self._node_service.connect(neighbor_identifier, neighbor_endpoint)
+        with self.subTest():
+            with self.assertRaises(AlreadyExists):
+                await self._node_service.connect(neighbor_identifier, neighbor_endpoint)
 
         with self.subTest():
             neighbor = await self._node_service.find({'an-stranger'}, neighbor_identifier)
@@ -39,8 +40,9 @@ class TestNodeService(IsolatedAsyncioTestCase):
             self.assertEqual(neighbor.endpoint, neighbor_endpoint)
 
     async def test_find(self) -> None:
-        with self.assertRaises(AlreadyAnswered):
-            await self._node_service.find({TestNodeService.TEST_NODE_SETTINGS.IDENTIFIER}, 'test-node')
+        with self.subTest():
+            with self.assertRaises(AlreadyAnswered):
+                await self._node_service.find({TestNodeService.TEST_NODE_SETTINGS.IDENTIFIER}, 'test-node')
 
         neighbor_identifier = 'test-neighbor'
         neighbor_endpoint = AnyUrl('http://neighbor:80')
@@ -67,5 +69,6 @@ class TestNodeService(IsolatedAsyncioTestCase):
             self.assertEqual(found_node.identifier, far_neighbor_identifier)
             self.assertEqual(found_node.endpoint, far_neighbor_endpoint)
 
-        with self.assertRaises(DoesNotExist):
-            await self._node_service.find({'test-neighbor'}, 'not-existing-node')
+        with self.subTest():
+            with self.assertRaises(DoesNotExist):
+                await self._node_service.find({'test-neighbor'}, 'not-existing-node')
