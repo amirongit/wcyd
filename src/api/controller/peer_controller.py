@@ -11,7 +11,7 @@ class PeerController(BaseController):
 
     ROUTE = '/peers'
 
-    def __init__(self, peer_service: IPeerService):
+    def __init__(self, peer_service: IPeerService) -> None:
         self._peer_service = peer_service
 
     @docs(

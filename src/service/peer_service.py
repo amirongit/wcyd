@@ -4,7 +4,7 @@ from src.type.internal import PeerIdentifier, PublicKey
 
 
 class PeerService(IPeerService):
-    def __init__(self, peer_repo: IPeerRepo):
+    def __init__(self, peer_repo: IPeerRepo) -> None:
         self._peer_repo = peer_repo
 
     async def add(self, identifier: PeerIdentifier, public_key: PublicKey) -> None:
