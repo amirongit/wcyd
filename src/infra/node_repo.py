@@ -3,9 +3,9 @@ from typing import TypedDict
 from redis.asyncio import Redis
 
 from src.abc.infra.inode_repo import INodeRepo
-from src.type.alias import EndPoint, Identifier
+from src.type.internal import EndPoint, NodeIdentifier
 from src.type.entity import Node
-from src.type.exception import AlreadyExists, NotFound
+from src.type.exception import AlreadyExists, DoesNotExist
 
 
 class RedisRepoNodeObjectModel(TypedDict):
@@ -19,16 +19,16 @@ class NodeRepo(INodeRepo):
     def __init__(self, connection: Redis) -> None:
         self._connection = connection
 
-    async def get(self, identifier: Identifier) -> Node:
+    async def get(self, identifier: NodeIdentifier) -> Node:
         if bool(obj := await self._connection.hgetall(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier))): # type: ignore
             return Node(identifier=identifier, **obj)
 
-        raise NotFound
+        raise DoesNotExist
 
-    async def exists(self, identifier: Identifier) -> bool:
+    async def exists(self, identifier: NodeIdentifier) -> bool:
         return len(await self._connection.keys(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier))) == 1
 
-    async def create(self, identifier: Identifier, endpoint: EndPoint) -> None:
+    async def create(self, identifier: NodeIdentifier, endpoint: EndPoint) -> None:
         if await self.exists(identifier):
             raise AlreadyExists
 

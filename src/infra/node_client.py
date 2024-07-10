@@ -3,9 +3,9 @@ from aiohttp import ClientSession
 from pydantic.networks import AnyUrl
 
 from src.abc.infra.inode_client import INodeClient
-from src.type.alias import EndPoint, Identifier
+from src.type.internal import EndPoint, NodeIdentifier
 from src.type.entity import Node
-from src.type.exception import AlreadyAnswered, AlreadyExists, NotFound
+from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
 
 
 class APIClientNodeObjectModel(TypedDict):
@@ -33,7 +33,7 @@ class NodeClient(INodeClient):
 
         raise Exception
 
-    async def connect(self, host: Node, identifier: Identifier, endpoint: EndPoint) -> None:
+    async def connect(self, host: Node, identifier: NodeIdentifier, endpoint: EndPoint) -> None:
 
         body: APIClientNodeObjectModel = {'identifier': identifier, 'endpoint': str(endpoint)}
 
@@ -47,7 +47,7 @@ class NodeClient(INodeClient):
                     case _:
                         raise Exception
 
-    async def find(self, host: Node, questioners: set[Identifier], identifier: Identifier) -> Node:
+    async def find(self, host: Node, questioners: set[NodeIdentifier], identifier: NodeIdentifier) -> Node:
         async with self._session as sess:
             async with sess.get(f'{host.endpoint}/nodes/{identifier}', params={'questioners': questioners}
             ) as resp:
@@ -55,7 +55,7 @@ class NodeClient(INodeClient):
                     case 200:
                         return Node(**await resp.json())
                     case 404:
-                        raise NotFound
+                        raise DoesNotExist
                     case 409:
                         raise AlreadyAnswered
                     case _:
