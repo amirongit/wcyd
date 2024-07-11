@@ -2,33 +2,37 @@ from typing import Type
 from blacksheep import Application, Request, Response, not_found
 from redis.asyncio import Redis
 
-from src.abc.infra.inode_client import INodeClient
-from src.abc.infra.inode_repo import INodeRepo
-from src.abc.infra.ipeer_repo import IPeerRepo
-from src.abc.service.inode_service import INodeService
-from src.abc.service.ipeer_service import IPeerService
-from src.infra.node_client import NodeClient
-from src.infra.node_repo import NodeRepo
-from src.infra.peer_repo import PeerRepo
-from src.service.node_service import NodeService
-from src.service.peer_service import PeerService
 from src.settings import NodeSettings, read_settings
-from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
 
 
 SETTINGS = read_settings()
 
 
 async def inject_dependencies(app: Application) -> None:
+    from src.abc.infra.inode_client import INodeClient
+    from src.abc.infra.inode_repo import INodeRepo
+    from src.abc.infra.ipeer_repo import IPeerRepo
+    from src.abc.use_case.add_peer_use_case import AddPeerUseCase
+    from src.abc.use_case.connect_node_use_case import ConnectNodeUseCase
+    from src.abc.use_case.find_node_use_case import FindNodeUseCase
+    from src.abc.use_case.remove_peer_use_case import RemovePeerUseCase
+    from src.infra.node_client import NodeClient
+    from src.infra.node_repo import NodeRepo
+    from src.infra.peer_repo import PeerRepo
+    from src.use_case.add_peer import AddPeer
+    from src.use_case.connect_node import ConnectNode
+    from src.use_case.find_node import FindNode
+    from src.use_case.remove_peer import RemovePeer
+
     app.services.add_instance(Redis.from_url(str(SETTINGS.REDIS.DSN), decode_responses=True)) # type: ignore
     app.services.add_singleton(INodeRepo, NodeRepo) # type: ignore
     app.services.add_singleton(IPeerRepo, PeerRepo) # type: ignore
-
     app.services.add_scoped(INodeClient, NodeClient) # type: ignore
-
     app.services.add_instance(SETTINGS.LOCAL_NODE, NodeSettings) # type: ignore
-    app.services.add_singleton(INodeService, NodeService) # type: ignore
-    app.services.add_singleton(IPeerService, PeerService) # type: ignore
+    app.services.add_singleton(AddPeerUseCase, AddPeer) # type: ignore
+    app.services.add_singleton(ConnectNodeUseCase, ConnectNode) # type: ignore
+    app.services.add_singleton(FindNodeUseCase, FindNode) # type: ignore
+    app.services.add_singleton(RemovePeerUseCase, RemovePeer) # type: ignore
 
 
 async def register_controllers(app: Application) -> None:
@@ -37,6 +41,7 @@ async def register_controllers(app: Application) -> None:
 
 
 async def register_exception_handlers(app: Application) -> None:
+    from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
 
     async def handle_already_exists(
         self: Application,
