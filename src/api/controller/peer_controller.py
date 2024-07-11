@@ -1,7 +1,7 @@
 from blacksheep import FromJSON, Response
 from blacksheep.server.controllers import post
 
-from src.abc.service.ipeer_service import IPeerService
+from src.abc.use_case.add_peer_use_case import AddPeerUseCase
 from src.api.docs import docs
 from src.api.controller.base_controller import BaseController
 from src.api.io_type.peer_io import PeerCreationRequest
@@ -11,8 +11,8 @@ class PeerController(BaseController):
 
     ROUTE = '/peers'
 
-    def __init__(self, peer_service: IPeerService) -> None:
-        self._peer_service = peer_service
+    def __init__(self, add_use_case: AddPeerUseCase) -> None:
+        self._add_use_case = add_use_case
 
     @docs(
         tags=['peers'],
@@ -23,6 +23,6 @@ class PeerController(BaseController):
     async def register_peer(self, request_body: FromJSON[PeerCreationRequest]) -> Response:
 
         serialized = request_body.value
-        await self._peer_service.add(serialized.identifier, serialized.public_key)
+        await self._add_use_case.execute(serialized.identifier, serialized.public_key)
 
         return self.created()
