@@ -7,6 +7,7 @@ from pydantic.dataclasses import dataclass
 from src.type.enum import AsymmetricCryptographyProvider
 
 
+# TODO: use the new syntax when mypy releases THE FUCKING SUPPORT
 NodeIdentifier: TypeAlias = str
 PeerIdentifier: TypeAlias = str
 EndPoint: TypeAlias = AnyUrl
