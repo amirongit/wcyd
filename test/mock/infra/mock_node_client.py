@@ -28,7 +28,7 @@ class MockNodeClient(INodeClient):
         self._mem_storage: dict[NodeIdentifier, DirectNeighborMemStorage] = dict()
 
     async def connect_node(self, host: Node, identifier: NodeIdentifier, endpoint: EndPoint) -> None:
-        if host.identifier in self._mem_storage:
+        if host.identifier in self._mem_storage and identifier in self._mem_storage[host.identifier]['nodes']:
             raise AlreadyExists
 
         self._mem_storage[host.identifier] = {'nodes': {identifier: {'endpoint': str(endpoint)}}, 'peers': dict()}
