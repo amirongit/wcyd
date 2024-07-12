@@ -41,6 +41,6 @@ class NodeController(BaseController):
     @get('/{identifier}')
     async def get_node(self, identifier: FromRoute[str], questioners: FromQuery[set[str]]) -> Response:
 
-        node = await self._find_use_case.execute(questioners.value, identifier.value)
+        node = await self._find_use_case.execute(identifier.value, questioners.value)
 
         return self.ok(NodeModel(identifier=node.identifier, endpoint=node.endpoint))

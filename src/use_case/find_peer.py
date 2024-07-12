@@ -24,7 +24,4 @@ class FindPeer(FindPeerUseCase):
         if identifier.node == self._settings.IDENTIFIER:
             return await self._peer_repo.get(identifier.peer)
 
-        return await self._node_client.find_peer(
-            await self._find_node_use_case.execute(set(), identifier.node),
-            identifier
-        )
+        return await self._node_client.find_peer(await self._find_node_use_case.execute(identifier.node), identifier)

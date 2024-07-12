@@ -23,14 +23,14 @@ class TestFindNodeUseCase(IsolatedAsyncioTestCase):
 
     async def test_already_answered(self) -> None:
         with self.assertRaises(AlreadyAnswered):
-            await self._use_case.execute({self._settings.IDENTIFIER}, 'not-being-tested')
+            await self._use_case.execute('not-being-tested', {self._settings.IDENTIFIER})
 
     async def test_direct_neighbor(self) -> None:
         neighbor_identifier = 'neighbor-identifier'
         endpoint = AnyUrl('http://neighbor:80')
         add_internal_neighbor(self._mock_node_repo, neighbor_identifier, endpoint)
 
-        node = await self._use_case.execute({'not-being-tested'}, neighbor_identifier)
+        node = await self._use_case.execute(neighbor_identifier, {'not-being-tested'})
 
         self.assertEqual(node.identifier, neighbor_identifier)
         self.assertEqual(node.endpoint, endpoint)
@@ -48,11 +48,11 @@ class TestFindNodeUseCase(IsolatedAsyncioTestCase):
             far_neighbor_endpoint,
         )
 
-        node = await self._use_case.execute({'not-being-tested'}, far_neighbor_identifier)
+        node = await self._use_case.execute(far_neighbor_identifier, {'not-being-tested'})
 
         self.assertEqual(node.identifier, far_neighbor_identifier)
         self.assertEqual(node.endpoint, far_neighbor_endpoint)
 
     async def test_absent_identifier(self) -> None:
         with self.assertRaises(DoesNotExist):
-            await self._use_case.execute({'not-being-tested'}, 'absent-identifier')
+            await self._use_case.execute('absent-identifier', {'not-being-tested'})

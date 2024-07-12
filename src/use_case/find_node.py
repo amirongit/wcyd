@@ -13,7 +13,10 @@ class FindNode(FindNodeUseCase):
         self._node_repo = node_repo
         self._node_client = node_client
 
-    async def execute(self, questioners: set[NodeIdentifier], identifier: NodeIdentifier) -> Node:
+    async def execute(self, identifier: NodeIdentifier, questioners: set[NodeIdentifier] | None = None) -> Node:
+        if questioners is None:
+            questioners = set()
+
         if self._settings.IDENTIFIER in questioners:
             raise AlreadyAnswered
 
