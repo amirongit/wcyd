@@ -23,4 +23,3 @@ class ConnectNode(ConnectNodeUseCase):
             )
         except AlreadyExists:
             pass
-
