@@ -16,7 +16,7 @@ class ConnectNode(ConnectNodeUseCase):
         await self._node_repo.create(identifier, endpoint)
 
         try:
-            await self._node_client.connect(
+            await self._node_client.connect_node(
                 await self._node_repo.get(identifier),
                 self._settings.IDENTIFIER,
                 self._settings.ENDPOINT

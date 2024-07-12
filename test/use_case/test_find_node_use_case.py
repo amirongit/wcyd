@@ -12,19 +12,18 @@ from test.utils import add_node, add_far_neighbor
 
 class TestFindNodeUseCase(IsolatedAsyncioTestCase):
 
-    TEST_NODE_SETTINGS = NodeSettings(
-        IDENTIFIER='test-node',
-        ENDPOINT=AnyUrl('http://localhost:44777')
-    )
-
     def setUp(self) -> None:
+        self._settings = NodeSettings(
+            IDENTIFIER='test-node',
+            ENDPOINT=AnyUrl('http://localhost:44777')
+        )
         self._mock_node_client = MockNodeClient()
         self._mock_node_repo = MockNodeRepo()
-        self._use_case = FindNode(TestFindNodeUseCase.TEST_NODE_SETTINGS, self._mock_node_repo, self._mock_node_client)
+        self._use_case = FindNode(self._settings, self._mock_node_repo, self._mock_node_client)
 
     async def test_already_answered(self) -> None:
         with self.assertRaises(AlreadyAnswered):
-            await self._use_case.execute({TestFindNodeUseCase.TEST_NODE_SETTINGS.IDENTIFIER}, 'not-being-tested')
+            await self._use_case.execute({self._settings.IDENTIFIER}, 'not-being-tested')
 
     async def test_direct_neighbor(self) -> None:
         neighbor_identifier = 'neighbor-identifier'
