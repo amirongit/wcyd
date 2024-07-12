@@ -13,9 +13,10 @@ def add_far_neighbor(
     far_neighbor: NodeIdentifier,
     endpoint: EndPoint
 ) -> None:
-    '''WARNING: this function resets a key in the _mem_storage dictionary; read the code before using'''
-
-    node_client._mem_storage[direct_neighbor] = {far_neighbor: {'endpoint': str(endpoint)}}
+    if direct_neighbor in node_client._mem_storage:
+        node_client._mem_storage[direct_neighbor]['nodes'].update({far_neighbor: {'endpoint': str(endpoint)}})
+    else:
+        node_client._mem_storage[direct_neighbor] = {'nodes': {far_neighbor: {'endpoint': str(endpoint)}}, 'peers': dict()}
 
 
 def get_peer(peer_repo: MockPeerRepo, peer_identifier: PeerIdentifier, node_identifier: NodeIdentifier) -> Peer:

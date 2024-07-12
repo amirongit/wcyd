@@ -6,7 +6,7 @@ from src.abc.use_case.connect_node_use_case import ConnectNodeUseCase
 from src.abc.use_case.find_node_use_case import FindNodeUseCase
 from src.api.controller.base_controller import BaseController
 from src.api.docs import docs
-from src.api.io_type.node_io import NodeConnectionRequest, NodeModel
+from src.api.io_type.node_io import NodeModel
 
 
 class NodeController(BaseController):
@@ -23,10 +23,9 @@ class NodeController(BaseController):
         responses={201: 'registeration done successfully', 409: 'already connected'}
     )
     @post('/')
-    async def register_node(self, request_body: FromJSON[NodeConnectionRequest]) -> Response:
+    async def register_node(self, request_body: FromJSON[NodeModel]) -> Response:
 
-        serialized = request_body.value
-        await self._connect_use_case.execute(serialized.identifier, serialized.endpoint)
+        await self._connect_use_case.execute(request_body.value.identifier, request_body.value.endpoint)
 
         return self.created()
 
@@ -44,4 +43,4 @@ class NodeController(BaseController):
 
         node = await self._find_use_case.execute(questioners.value, identifier.value)
 
-        return self.ok(NodeModel(identifier=node.identifier, endpoint=str(node.endpoint)))
+        return self.ok(NodeModel(identifier=node.identifier, endpoint=node.endpoint))
