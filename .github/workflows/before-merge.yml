@@ -26,4 +26,4 @@ jobs:
       - run: echo """running mypy (static type checker)"""
       - run: mypy ./src ./test
       - run: echo """running pytest (unit test framework)"""
-      - run: pytest -v
+      - run: pytest -v --cov=src.use_case ./test
