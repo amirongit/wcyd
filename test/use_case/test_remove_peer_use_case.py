@@ -8,7 +8,7 @@ from src.type.exception import DoesNotExist
 from src.type.internal import PublicKey
 from src.use_case.remove_peer import RemovePeer
 from test.mock.infra.mock_peer_repo import MockPeerRepo
-from test.utils import add_peer
+from test.utils import add_internal_peer
 
 
 class TestRemovePeerUseCase(IsolatedAsyncioTestCase):
@@ -52,7 +52,7 @@ class TestRemovePeerUseCase(IsolatedAsyncioTestCase):
     async def test_normal(self) -> None:
         existing_peer_identifier = 'existing-peer-identifier'
 
-        add_peer(
+        add_internal_peer(
             self._peer_repo,
             existing_peer_identifier,
             PublicKey(provider=AsymmetricCryptographyProvider.GPG, value=self.SAMPLE_PUBLIC_KEY_VALUE)

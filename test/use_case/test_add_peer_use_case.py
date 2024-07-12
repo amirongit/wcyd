@@ -8,7 +8,7 @@ from src.type.exception import AlreadyExists
 from src.type.internal import PublicKey
 from src.use_case.add_peer import AddPeer
 from test.mock.infra.mock_peer_repo import MockPeerRepo
-from test.utils import get_peer
+from test.utils import get_internal_peer
 
 
 class TestAddPeerUseCase(IsolatedAsyncioTestCase):
@@ -51,7 +51,7 @@ class TestAddPeerUseCase(IsolatedAsyncioTestCase):
             PublicKey(provider=AsymmetricCryptographyProvider.GPG, value=self.SAMPLE_PUBLIC_KEY_VALUE)
         )
 
-        peer = get_peer(self._peer_repo, test_peer_identifier, 'not-being-tested')
+        peer = get_internal_peer(self._peer_repo, test_peer_identifier, 'not-being-tested')
 
         self.assertEqual(peer.identifier.peer, test_peer_identifier)
         self.assertEqual(peer.public_key.provider, AsymmetricCryptographyProvider.GPG)
