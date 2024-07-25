@@ -68,12 +68,8 @@ class NodeClient(INodeClient):
                         raise Exception
 
     async def find_peer(self, host: Node, identifier: UniversalPeerIdentifier) -> Peer:
-        # TODO: the url is not restful
-        # discovery logic isn't consistent
-        # requires change at use case & controller levels
-        # should use the 'relational schema' convention
         async with self._session as sess:
-            async with sess.get(f'{host.endpoint}/peers/{identifier.node}/{identifier.peer}') as resp:
+            async with sess.get(f'{host.endpoint}/nodes/{identifier.node}/peers/{identifier.peer}') as resp:
                 match resp.status:
                     case 200:
                         body: APIClientPeerObjectModel = await resp.json()
