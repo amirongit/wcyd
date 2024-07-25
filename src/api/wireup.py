@@ -9,6 +9,7 @@ SETTINGS = read_settings()
 
 
 async def inject_dependencies(app: Application) -> None:
+    from src.abc.infra.imessage_repo import IMessageRepo
     from src.abc.infra.inode_client import INodeClient
     from src.abc.infra.inode_repo import INodeRepo
     from src.abc.infra.ipeer_repo import IPeerRepo
@@ -16,6 +17,8 @@ async def inject_dependencies(app: Application) -> None:
     from src.abc.use_case.connect_node_use_case import ConnectNodeUseCase
     from src.abc.use_case.find_node_use_case import FindNodeUseCase
     from src.abc.use_case.remove_peer_use_case import RemovePeerUseCase
+    from src.abc.use_case.send_message_use_case import SendMessageUseCase
+    from src.infra.message_repo import MessageRepo
     from src.infra.node_client import NodeClient
     from src.infra.node_repo import NodeRepo
     from src.infra.peer_repo import PeerRepo
@@ -23,21 +26,25 @@ async def inject_dependencies(app: Application) -> None:
     from src.use_case.connect_node import ConnectNode
     from src.use_case.find_node import FindNode
     from src.use_case.remove_peer import RemovePeer
+    from src.use_case.send_message import SendMessage
 
     app.services.add_instance(Redis.from_url(str(SETTINGS.REDIS.DSN), decode_responses=True)) # type: ignore
     app.services.add_singleton(INodeRepo, NodeRepo) # type: ignore
     app.services.add_singleton(IPeerRepo, PeerRepo) # type: ignore
+    app.services.add_singleton(IMessageRepo, MessageRepo) # type: ignore
     app.services.add_scoped(INodeClient, NodeClient) # type: ignore
     app.services.add_instance(SETTINGS.LOCAL_NODE, NodeSettings) # type: ignore
     app.services.add_singleton(AddPeerUseCase, AddPeer) # type: ignore
     app.services.add_singleton(ConnectNodeUseCase, ConnectNode) # type: ignore
     app.services.add_singleton(FindNodeUseCase, FindNode) # type: ignore
     app.services.add_singleton(RemovePeerUseCase, RemovePeer) # type: ignore
+    app.services.add_singleton(SendMessageUseCase, SendMessage) # type: ignore
 
 
 async def register_controllers(app: Application) -> None:
     from src.api.controller.node_controller import NodeController
     from src.api.controller.peer_controller import PeerController
+    from src.api.controller.related_message_controller import RelatedMessageController
 
 
 async def register_exception_handlers(app: Application) -> None:
