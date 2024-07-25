@@ -40,7 +40,7 @@ class TestConnectNodeUseCase(IsolatedAsyncioTestCase):
         endpoint = AnyUrl('http://test-neighbor:80')
         await self._use_case.execute(test_neighbor_identifier, endpoint)
 
-        neighbor = get_internal_neighbor(self._mock_node_repo, test_neighbor_identifier)
+        neighbor = await get_internal_neighbor(self._mock_node_repo, test_neighbor_identifier)
 
         self.assertEqual(neighbor.identifier, test_neighbor_identifier)
         self.assertEqual(neighbor.endpoint, endpoint)

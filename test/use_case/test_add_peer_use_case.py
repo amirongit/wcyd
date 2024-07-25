@@ -51,7 +51,7 @@ class TestAddPeerUseCase(IsolatedAsyncioTestCase):
             PublicKey(provider=AsymmetricCryptographyProvider.GPG, value=self.SAMPLE_PUBLIC_KEY_VALUE)
         )
 
-        peer = get_internal_peer(self._peer_repo, test_peer_identifier, 'not-being-tested')
+        peer = await get_internal_peer(self._peer_repo, test_peer_identifier)
 
         self.assertEqual(peer.identifier.peer, test_peer_identifier)
         self.assertEqual(peer.public_key.provider, AsymmetricCryptographyProvider.GPG)

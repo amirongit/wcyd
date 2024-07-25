@@ -45,11 +45,7 @@ class TestFindPeerUseCase(IsolatedAsyncioTestCase):
         self._mock_node_client = MockNodeClient()
         self._mock_peer_repo = MockPeerRepo(self._settings)
         self._mock_node_repo = MockNodeRepo()
-        self._find_node_use_case = FindNode(
-            self._settings,
-            self._mock_node_repo,
-            self._mock_node_client
-        )
+        self._find_node_use_case = FindNode(self._settings, self._mock_node_repo, self._mock_node_client)
         self._use_case = FindPeer(
             self._settings,
             self._mock_node_client,
@@ -65,7 +61,9 @@ class TestFindPeerUseCase(IsolatedAsyncioTestCase):
             PublicKey(provider=AsymmetricCryptographyProvider.GPG, value=TestFindPeerUseCase.SAMPLE_PUBLIC_KEY_VALUE)
         )
 
-        peer = await self._use_case.execute(UniversalPeerIdentifier(node=self._settings.IDENTIFIER, peer=existing_peer_identifier))
+        peer = await self._use_case.execute(
+            UniversalPeerIdentifier(node=self._settings.IDENTIFIER, peer=existing_peer_identifier)
+        )
 
         self.assertEqual(peer.identifier.peer, existing_peer_identifier)
         self.assertEqual(peer.identifier.node, self._settings.IDENTIFIER)
@@ -82,7 +80,9 @@ class TestFindPeerUseCase(IsolatedAsyncioTestCase):
             PublicKey(provider=AsymmetricCryptographyProvider.GPG, value=TestFindPeerUseCase.SAMPLE_PUBLIC_KEY_VALUE)
         )
 
-        peer = await self._use_case.execute(UniversalPeerIdentifier(node=neighbor_identifier, peer=external_peer_identifier))
+        peer = await self._use_case.execute(
+            UniversalPeerIdentifier(node=neighbor_identifier, peer=external_peer_identifier)
+        )
 
         self.assertEqual(peer.identifier.node, neighbor_identifier)
         self.assertEqual(peer.identifier.peer, external_peer_identifier)

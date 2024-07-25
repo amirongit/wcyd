@@ -1,4 +1,5 @@
 from typing import TypedDict
+from uuid import UUID, uuid4
 
 from pydantic.networks import AnyUrl
 from src.abc.infra.inode_client import INodeClient
@@ -17,9 +18,17 @@ class MockClientPeerObjectModel(TypedDict):
     key_value: str
 
 
+class MockClientMessageObjectModel(TypedDict):
+    identifier: str
+    source_node: str
+    source_peer: str
+    content: str
+
+
 class DirectNeighborMemStorage(TypedDict):
     nodes: dict[NodeIdentifier, MockClientNodeObjectModel]
     peers: dict[PeerIdentifier, MockClientPeerObjectModel]
+    messages: dict[PeerIdentifier, list[MockClientMessageObjectModel]]
 
 
 class MockNodeClient(INodeClient):
@@ -31,29 +40,50 @@ class MockNodeClient(INodeClient):
         if host.identifier in self._mem_storage and identifier in self._mem_storage[host.identifier]['nodes']:
             raise AlreadyExists
 
-        self._mem_storage[host.identifier] = {'nodes': {identifier: {'endpoint': str(endpoint)}}, 'peers': dict()}
+        self._mem_storage[host.identifier] = {
+            'nodes': {identifier: {'endpoint': str(endpoint)}},
+            'peers': dict(),
+            'messages': dict()
+        }
 
     async def find_node(self, host: Node, questioners: set[NodeIdentifier], identifier: NodeIdentifier) -> Node:
         if host.identifier in questioners:
             raise AlreadyAnswered
 
-        try:
-            if (obj := self._mem_storage[host.identifier]['nodes'].get(identifier)) is None:
-                raise DoesNotExist
-            return Node(identifier=identifier, endpoint=AnyUrl(obj['endpoint']))
-        except KeyError as e:
-            raise Exception from e
+        if (obj := self._mem_storage[host.identifier]['nodes'].get(identifier)) is None:
+            raise DoesNotExist
+        return Node(identifier=identifier, endpoint=AnyUrl(obj['endpoint']))
 
     async def find_peer(self, host: Node, identifier: UniversalPeerIdentifier) -> Peer:
-        try:
-            if (obj := self._mem_storage[host.identifier]['peers'].get(identifier.peer)) is None:
-                raise DoesNotExist
-            return Peer(
-                identifier=identifier,
-                public_key=PublicKey(
-                    provider=AsymmetricCryptographyProvider[obj['key_provider']],
-                    value=obj['key_value']
-                )
+        if (obj := self._mem_storage[host.identifier]['peers'].get(identifier.peer)) is None:
+            raise DoesNotExist
+        return Peer(
+            identifier=identifier,
+            public_key=PublicKey(
+                provider=AsymmetricCryptographyProvider[obj['key_provider']],
+                value=obj['key_value']
             )
-        except KeyError as e:
-            raise Exception from e
+        )
+
+    async def send_message(
+        self,
+        host: Node,
+        source: UniversalPeerIdentifier,
+        target: UniversalPeerIdentifier,
+        content: str
+    ) -> None:
+        if target.peer not in self._mem_storage[target.node]['peers']:
+            raise DoesNotExist
+
+        if (messages := self._mem_storage[target.node]['messages'].get(target.peer)) is None:
+            self._mem_storage[target.node]['messages'][target.peer] = list()
+            messages = self._mem_storage[target.node]['messages'][target.peer]
+
+        messages.append(
+            {
+                'identifier': str(uuid4()),
+                'source_node': source.node,
+                'source_peer': source.peer,
+                'content': content
+            }
+        )
