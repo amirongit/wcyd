@@ -14,3 +14,12 @@ class INodeClient(ABC):
 
     @abstractmethod
     async def find_peer(self, host: Node, identifier: UniversalPeerIdentifier) -> Peer: ...
+
+    @abstractmethod
+    async def send_message(
+        self,
+        host: Node,
+        source: UniversalPeerIdentifier,
+        target: UniversalPeerIdentifier,
+        content: str
+    ) -> None: ...

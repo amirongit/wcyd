@@ -29,6 +29,11 @@ class APIClientPeerObjectModel(TypedDict):
     public_key: APIClientPublicKeyObjectModel
 
 
+class APIClientMessageObjectModel(TypedDict):
+    source: APIClientUniversalIdentifierObjectModel
+    content: str
+
+
 class NodeClient(INodeClient):
 
     def __init__(self) -> None:
@@ -63,6 +68,10 @@ class NodeClient(INodeClient):
                         raise Exception
 
     async def find_peer(self, host: Node, identifier: UniversalPeerIdentifier) -> Peer:
+        # TODO: the url is not restful
+        # discovery logic isn't consistent
+        # requires change at use case & controller levels
+        # should use the 'relational schema' convention
         async with self._session as sess:
             async with sess.get(f'{host.endpoint}/peers/{identifier.node}/{identifier.peer}') as resp:
                 match resp.status:
@@ -78,6 +87,31 @@ class NodeClient(INodeClient):
                                 value=body['public_key']['value']
                             )
                         )
+                    case 404:
+                        raise DoesNotExist
+                    case _:
+                        raise Exception
+
+    async def send_message(
+        self,
+        host: Node,
+        source: UniversalPeerIdentifier,
+        target: UniversalPeerIdentifier,
+        content: str
+    ) -> None:
+        body: APIClientMessageObjectModel = {
+            'source': {'node': source.node, 'peer': source.peer},
+            'content': content
+        }
+
+        async with self._session as sess:
+            async with sess.post(
+                f'{host.endpoint}/nodes/{target.node}/peers/{target.peer}/messages',
+                json=body
+            ) as resp:
+                match resp.status:
+                    case 201:
+                        pass
                     case 404:
                         raise DoesNotExist
                     case _:
