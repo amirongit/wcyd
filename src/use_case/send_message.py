@@ -31,8 +31,7 @@ class SendMessage(SendMessageUseCase):
                 target,
                 content
             )
-
-        if not await self._peer_repo.exists(target.peer):
+        elif not await self._peer_repo.exists(target.peer):
             raise DoesNotExist
-
-        await self._message_repo.create(source, target, content)
+        else:
+            await self._message_repo.create(source, target.peer, content)
