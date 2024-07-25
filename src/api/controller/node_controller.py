@@ -38,9 +38,9 @@ class NodeController(BaseController):
             409: 'already answered'
         }
     )
-    @get('/{identifier}')
-    async def get_node(self, identifier: FromRoute[str], questioners: FromQuery[set[str]]) -> Response:
+    @get('/{node_identifier}')
+    async def get_node(self, node_identifier: FromRoute[str], questioners: FromQuery[set[str]]) -> Response:
 
-        node = await self._find_use_case.execute(identifier.value, questioners.value)
+        node = await self._find_use_case.execute(node_identifier.value, questioners.value)
 
         return self.ok(NodeModel(identifier=node.identifier, endpoint=node.endpoint))
