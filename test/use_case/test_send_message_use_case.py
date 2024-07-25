@@ -12,7 +12,13 @@ from test.mock.infra.mock_message_repo import MockMessageRepo
 from test.mock.infra.mock_node_client import MockNodeClient
 from test.mock.infra.mock_node_repo import MockNodeRepo
 from test.mock.infra.mock_peer_repo import MockPeerRepo
-from test.utils import add_external_peer, add_internal_neighbor, add_internal_peer, get_external_relative_messages, get_internal_relative_messages
+from test.utils import (
+    add_external_peer,
+    add_internal_neighbor,
+    add_internal_peer,
+    get_external_relative_messages,
+    get_internal_relative_messages
+)
 
 
 class TestSendMessageUseCase(IsolatedAsyncioTestCase):
