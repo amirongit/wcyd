@@ -1,4 +1,5 @@
 from typing import TypedDict
+
 from redis.asyncio import Redis
 
 from src.abc.infra.ipeer_repo import IPeerRepo
@@ -24,10 +25,17 @@ class PeerRepo(IPeerRepo):
 
     async def get(self, identifier: PeerIdentifier) -> Peer:
         obj: RedisRepoPeerObjectModel
-        if bool(obj := await self._connection.hgetall(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier))): # type: ignore
+        if bool(
+            obj := await self._connection.hgetall(
+                self._REDIS_KEY_NAMESPACE_.format(identifier=identifier)
+            ) # type: ignore
+        ):
             return Peer(
                 identifier=UniversalPeerIdentifier(node=self._settigns.IDENTIFIER, peer=identifier),
-                public_key=PublicKey(provider=AsymmetricCryptographyProvider[obj['key_provider']], value=obj['key_value'])
+                public_key=PublicKey(
+                    provider=AsymmetricCryptographyProvider[obj['key_provider']],
+                    value=obj['key_value']
+                )
             )
 
         raise DoesNotExist
