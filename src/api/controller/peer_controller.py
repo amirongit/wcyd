@@ -22,7 +22,6 @@ class PeerController(BaseController):
     @post('/')
     async def register_peer(self, request_body: FromJSON[PeerCreationRequest]) -> Response:
 
-        serialized = request_body.value
-        await self._add_use_case.execute(serialized.identifier, serialized.public_key)
+        await self._add_use_case.execute(request_body.value.identifier, request_body.value.public_key)
 
         return self.created()

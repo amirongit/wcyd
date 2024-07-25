@@ -13,7 +13,10 @@ class FindNode(FindNodeUseCase):
         self._node_repo = node_repo
         self._node_client = node_client
 
-    async def execute(self, questioners: set[NodeIdentifier], identifier: NodeIdentifier) -> Node:
+    async def execute(self, identifier: NodeIdentifier, questioners: set[NodeIdentifier] | None = None) -> Node:
+        if questioners is None:
+            questioners = set()
+
         if self._settings.IDENTIFIER in questioners:
             raise AlreadyAnswered
 
@@ -23,7 +26,7 @@ class FindNode(FindNodeUseCase):
             new_questioners = questioners | {self._settings.IDENTIFIER}
             for node in filter(lambda n: n.identifier not in new_questioners, await self._node_repo.all()):
                 try:
-                    return await self._node_client.find(node, new_questioners, identifier)
+                    return await self._node_client.find_node(node, new_questioners, identifier)
                 except DoesNotExist:
                     new_questioners.add(node.identifier)
                 except AlreadyAnswered:
