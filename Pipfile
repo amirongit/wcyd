@@ -10,6 +10,7 @@ blacksheep = "*"
 redis = "*"
 uvicorn = {extras = ["standard"] }
 mypy = "*"
+pyjwt = "*"
 
 [dev-packages]
 ipython = "*"
