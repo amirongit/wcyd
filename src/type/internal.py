@@ -1,8 +1,8 @@
 from typing import TypeAlias, Self
 
+from nacl.encoding import Base64Encoder
 from nacl.public import PublicKey as NACLPublicKey
 from nacl.signing import SigningKey as NACLSigningKey
-from nacl.encoding import Base64Encoder
 from pydantic import AnyUrl, model_validator
 from pydantic.dataclasses import dataclass
 
@@ -27,8 +27,8 @@ class Keyring:
     @model_validator(mode='after')
     def _v(self: Self) -> Self:
         try:
-            NACLPublicKey(self.encryption, Base64Encoder) # type: ignore
-            NACLSigningKey(self.signing, Base64Encoder) # type: ignore
+            NACLPublicKey(self.encryption.encode(), Base64Encoder)
+            NACLSigningKey(self.signing.encode(), Base64Encoder)
         except Exception as e:
             raise ValueError from e
 
