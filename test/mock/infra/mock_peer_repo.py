@@ -2,14 +2,13 @@ from typing import TypedDict
 from src.abc.infra.ipeer_repo import IPeerRepo
 from src.settings import NodeSettings
 from src.type.entity import Peer
-from src.type.enum import AsymmetricCryptographyProvider
 from src.type.exception import AlreadyExists, DoesNotExist
-from src.type.internal import PeerIdentifier, PublicKey, UniversalPeerIdentifier
+from src.type.internal import PeerIdentifier, Keyring, UniversalPeerIdentifier
 
 
 class MockRepoPeerObjectModel(TypedDict):
-    key_provider: str
-    key_value: str
+    signing_key: str
+    encryption_key: str
 
 
 class MockPeerRepo(IPeerRepo):
@@ -22,9 +21,9 @@ class MockPeerRepo(IPeerRepo):
             obj = self._mem_storage[identifier]
             return Peer(
                 identifier=UniversalPeerIdentifier(peer=identifier, node=self._settings.IDENTIFIER),
-                public_key=PublicKey(
-                    provider=AsymmetricCryptographyProvider[obj['key_provider']],
-                    value=obj['key_value']
+                keyring=Keyring(
+                    signing=obj['signing_key'],
+                    encryption=obj['encryption_key']
                 )
             )
         except KeyError:
@@ -33,11 +32,11 @@ class MockPeerRepo(IPeerRepo):
     async def exists(self, identifier: PeerIdentifier) -> bool:
         return identifier in self._mem_storage
 
-    async def create(self, identifier: PeerIdentifier, public_key: PublicKey) -> None:
+    async def create(self, identifier: PeerIdentifier, keyring: Keyring) -> None:
         if await self.exists(identifier):
             raise AlreadyExists
 
-        self._mem_storage[identifier] = {'key_provider': public_key.provider.name, 'key_value': public_key.value}
+        self._mem_storage[identifier] = {'signing_key': keyring.signing, 'encryption_key': keyring.encryption}
 
     async def delete(self, identifier: PeerIdentifier) -> None:
         try:

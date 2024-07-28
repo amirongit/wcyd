@@ -33,4 +33,4 @@ class RelatedPeerController(BaseController):
             UniversalPeerIdentifier(node=node_identifier.value, peer=peer_identifier.value)
         )
 
-        return self.ok(PeerModel(identifier=peer.identifier, public_key=peer.public_key))
+        return self.ok(PeerModel(identifier=peer.identifier, keyring=peer.keyring))

@@ -1,11 +1,10 @@
 from typing import TypeAlias, Self
 
 from nacl.public import PublicKey as NACLPublicKey
+from nacl.signing import SigningKey as NACLSigningKey
 from nacl.encoding import Base64Encoder
 from pydantic import AnyUrl, model_validator
 from pydantic.dataclasses import dataclass
-
-from src.type.enum import AsymmetricCryptographyProvider
 
 
 # TODO: use the new syntax when mypy releases THE FUCKING SUPPORT
@@ -21,23 +20,16 @@ class UniversalPeerIdentifier:
 
 
 @dataclass(kw_only=True)
-class PublicKey:
-    provider: AsymmetricCryptographyProvider
-    value: str
+class Keyring:
+    signing: str
+    encryption: str
 
     @model_validator(mode='after')
     def _v(self: Self) -> Self:
-        match self.provider:
-            case AsymmetricCryptographyProvider.NACL:
-                self._validate_nacl(self.value)
-            case _:
-                raise ValueError
-
-        return self
-
-    @staticmethod
-    def _validate_nacl(key: str) -> None:
         try:
-            NACLPublicKey(key, Base64Encoder) # type: ignore
+            NACLPublicKey(self.encryption, Base64Encoder) # type: ignore
+            NACLSigningKey(self.signing, Base64Encoder) # type: ignore
         except Exception as e:
             raise ValueError from e
+
+        return self

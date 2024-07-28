@@ -3,8 +3,7 @@ from unittest import IsolatedAsyncioTestCase
 from pydantic import AnyUrl
 
 from src.settings import NodeSettings
-from src.type.enum import AsymmetricCryptographyProvider
-from src.type.internal import PublicKey, UniversalPeerIdentifier
+from src.type.internal import Keyring, UniversalPeerIdentifier
 from src.use_case.find_node import FindNode
 from src.use_case.find_peer import FindPeer
 from test.mock.infra.mock_node_client import MockNodeClient
@@ -15,7 +14,8 @@ from test.utils import add_external_peer, add_internal_peer, add_internal_neighb
 
 class TestFindPeerUseCase(IsolatedAsyncioTestCase):
 
-    SAMPLE_PUBLIC_KEY_VALUE = 'Ov4eCC6vqpcBbswXLfn0aRD9TvafYB+BVprg7eyv03o='
+    SAMPLE_SIGNING_KEY = 'QW1j319IkhjIGVmOBZAJt0Tsqs6d4nWbA5n6l1iupj8='
+    SAMPLE_ENCRYPTION_KEY = 'Ov4eCC6vqpcBbswXLfn0aRD9TvafYB+BVprg7eyv03o='
 
     def setUp(self) -> None:
         self._settings = NodeSettings(
@@ -38,7 +38,7 @@ class TestFindPeerUseCase(IsolatedAsyncioTestCase):
         add_internal_peer(
             self._mock_peer_repo,
             existing_peer_identifier,
-            PublicKey(provider=AsymmetricCryptographyProvider.NACL, value=TestFindPeerUseCase.SAMPLE_PUBLIC_KEY_VALUE)
+            Keyring(signing=self.SAMPLE_SIGNING_KEY, encryption=self.SAMPLE_ENCRYPTION_KEY)
         )
 
         peer = await self._use_case.execute(
@@ -57,7 +57,7 @@ class TestFindPeerUseCase(IsolatedAsyncioTestCase):
             self._mock_node_client,
             neighbor_identifier,
             external_peer_identifier,
-            PublicKey(provider=AsymmetricCryptographyProvider.NACL, value=TestFindPeerUseCase.SAMPLE_PUBLIC_KEY_VALUE)
+            Keyring(signing=self.SAMPLE_SIGNING_KEY, encryption=self.SAMPLE_ENCRYPTION_KEY)
         )
 
         peer = await self._use_case.execute(

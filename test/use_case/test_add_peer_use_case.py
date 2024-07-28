@@ -3,9 +3,8 @@ from unittest import IsolatedAsyncioTestCase
 from pydantic import AnyUrl
 
 from src.settings import NodeSettings
-from src.type.enum import AsymmetricCryptographyProvider
 from src.type.exception import AlreadyExists
-from src.type.internal import PublicKey
+from src.type.internal import Keyring
 from src.use_case.add_peer import AddPeer
 from test.mock.infra.mock_peer_repo import MockPeerRepo
 from test.utils import get_internal_peer
@@ -13,7 +12,8 @@ from test.utils import get_internal_peer
 
 class TestAddPeerUseCase(IsolatedAsyncioTestCase):
 
-    SAMPLE_PUBLIC_KEY_VALUE = 'Ov4eCC6vqpcBbswXLfn0aRD9TvafYB+BVprg7eyv03o='
+    SAMPLE_SIGNING_KEY = 'QW1j319IkhjIGVmOBZAJt0Tsqs6d4nWbA5n6l1iupj8='
+    SAMPLE_ENCRYPTION_KEY = 'Ov4eCC6vqpcBbswXLfn0aRD9TvafYB+BVprg7eyv03o='
 
     def setUp(self) -> None:
         self._settings = NodeSettings(
@@ -28,24 +28,24 @@ class TestAddPeerUseCase(IsolatedAsyncioTestCase):
 
         await self._use_case.execute(
             test_peer_identifier,
-            PublicKey(provider=AsymmetricCryptographyProvider.NACL, value=self.SAMPLE_PUBLIC_KEY_VALUE)
+            Keyring(signing=self.SAMPLE_SIGNING_KEY, encryption=self.SAMPLE_ENCRYPTION_KEY)
         )
 
         peer = await get_internal_peer(self._peer_repo, test_peer_identifier)
 
         self.assertEqual(peer.identifier.peer, test_peer_identifier)
-        self.assertEqual(peer.public_key.provider, AsymmetricCryptographyProvider.NACL)
-        self.assertEqual(peer.public_key.value, self.SAMPLE_PUBLIC_KEY_VALUE)
+        self.assertEqual(peer.keyring.signing, self.SAMPLE_SIGNING_KEY)
+        self.assertEqual(peer.keyring.encryption, self.SAMPLE_ENCRYPTION_KEY)
 
     async def test_duplicated_identifier(self) -> None:
         existing_peer_identifier = 'existing-peer-identifier'
         await self._use_case.execute(
             existing_peer_identifier,
-            PublicKey(provider=AsymmetricCryptographyProvider.NACL, value=self.SAMPLE_PUBLIC_KEY_VALUE)
+            Keyring(signing=self.SAMPLE_SIGNING_KEY, encryption=self.SAMPLE_ENCRYPTION_KEY)
         )
 
         with self.assertRaises(AlreadyExists):
             await self._use_case.execute(
                 existing_peer_identifier,
-                PublicKey(provider=AsymmetricCryptographyProvider.NACL, value=self.SAMPLE_PUBLIC_KEY_VALUE)
+                Keyring(signing=self.SAMPLE_SIGNING_KEY, encryption=self.SAMPLE_ENCRYPTION_KEY)
             )
