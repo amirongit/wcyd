@@ -1,6 +1,7 @@
-import re
 from typing import TypeAlias, Self
 
+from nacl.public import PublicKey as NACLPublicKey
+from nacl.encoding import Base64Encoder
 from pydantic import AnyUrl, model_validator
 from pydantic.dataclasses import dataclass
 
@@ -27,17 +28,16 @@ class PublicKey:
     @model_validator(mode='after')
     def _v(self: Self) -> Self:
         match self.provider:
-            case AsymmetricCryptographyProvider.GPG:
-                self._validate_gpg_pub_key(self.value)
+            case AsymmetricCryptographyProvider.NACL:
+                self._validate_nacl(self.value)
             case _:
                 raise ValueError
 
         return self
 
     @staticmethod
-    def _validate_gpg_pub_key(key: str) -> None:
-        if not re.match(
-            r'^-----BEGIN PGP PUBLIC KEY BLOCK-----\s+(Version: .+\s+)?(.+\s+)+-----END PGP PUBLIC KEY BLOCK-----$',
-            key
-        ):
-            raise ValueError
+    def _validate_nacl(key: str) -> None:
+        try:
+            NACLPublicKey(key, Base64Encoder) # type: ignore
+        except Exception as e:
+            raise ValueError from e
