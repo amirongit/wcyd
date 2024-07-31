@@ -80,3 +80,10 @@ async def register_exception_handlers(app: Application) -> None:
         return not_found()
 
     app.exceptions_handlers[DoesNotExist] = handle_not_found
+
+
+async def register_authentication_handlers(app: Application) -> None:
+    from src.api.auth import DecentralizedAuthenticationHandler
+
+    strategies = app.use_authentication()
+    strategies.add(DecentralizedAuthenticationHandler)

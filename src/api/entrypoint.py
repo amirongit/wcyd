@@ -1,6 +1,11 @@
 from blacksheep import Application
 
-from src.api.wireup import inject_dependencies, register_controllers, register_exception_handlers
+from src.api.wireup import (
+    inject_dependencies,
+    register_controllers,
+    register_exception_handlers,
+    register_authentication_handlers
+)
 from src.api.docs import docs
 
 
@@ -9,6 +14,7 @@ app = Application(show_error_details=True)
 app.on_start(inject_dependencies)
 app.on_start(register_controllers)
 app.on_start(register_exception_handlers)
+app.on_start(register_authentication_handlers)
 
 docs.bind_app(app)
 
