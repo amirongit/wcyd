@@ -1,7 +1,7 @@
 from json import loads
 
 from pydantic.dataclasses import dataclass
-from pydantic import AnyUrl, RedisDsn
+from pydantic import AnyUrl, Field, RedisDsn
 
 
 @dataclass(kw_only=True)
@@ -16,9 +16,15 @@ class RedisSettings:
 
 
 @dataclass(kw_only=True)
+class AuthenticationSettings:
+    TIME_WINDOW: int = Field(gt=0)
+
+
+@dataclass(kw_only=True)
 class Settings:
     LOCAL_NODE: NodeSettings
     REDIS: RedisSettings
+    AUTHENTICATION: AuthenticationSettings
 
 
 def read_settings() -> Settings:

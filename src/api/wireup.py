@@ -2,7 +2,7 @@ from typing import Type
 from blacksheep import Application, Request, Response, not_found
 from redis.asyncio import Redis
 
-from src.settings import NodeSettings, read_settings
+from src.settings import read_settings
 
 
 SETTINGS = read_settings()
@@ -29,6 +29,7 @@ async def inject_dependencies(app: Application) -> None:
     from src.use_case.find_peer import FindPeer
     from src.use_case.remove_peer import RemovePeer
     from src.use_case.send_message import SendMessage
+    from src.settings import AuthenticationSettings, NodeSettings
 
     app.services.add_instance(Redis.from_url(str(SETTINGS.REDIS.DSN), decode_responses=True)) # type: ignore
     app.services.add_singleton(INodeRepo, NodeRepo) # type: ignore
@@ -36,6 +37,7 @@ async def inject_dependencies(app: Application) -> None:
     app.services.add_singleton(IMessageRepo, MessageRepo) # type: ignore
     app.services.add_scoped(INodeClient, NodeClient) # type: ignore
     app.services.add_instance(SETTINGS.LOCAL_NODE, NodeSettings) # type: ignore
+    app.services.add_instance(SETTINGS.AUTHENTICATION, AuthenticationSettings) # type: ignore
     app.services.add_singleton(AddPeerUseCase, AddPeer) # type: ignore
     app.services.add_singleton(ConnectNodeUseCase, ConnectNode) # type: ignore
     app.services.add_singleton(FindNodeUseCase, FindNode) # type: ignore

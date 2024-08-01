@@ -9,14 +9,14 @@ pydantic = {extras = ["email"] }
 blacksheep = "*"
 redis = "*"
 uvicorn = {extras = ["standard"] }
-mypy = "*"
+pynacl = "*"
 
 [dev-packages]
 ipython = "*"
-mypy = "*"
 debugpy = "*"
 pytest = "*"
 pytest-cov = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.12"

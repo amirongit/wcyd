@@ -1,15 +1,20 @@
 from blacksheep import Application
+from guardpost import Policy
+from guardpost.common import AuthenticatedRequirement
 
+from src.api.auth import DecentralizedAuthenticationHandler
 from src.api.wireup import inject_dependencies, register_controllers, register_exception_handlers
 from src.api.docs import docs
 
 
-app = Application(show_error_details=True)
+app = Application(show_error_details=False)
 
 app.on_start(inject_dependencies)
 app.on_start(register_controllers)
 app.on_start(register_exception_handlers)
 
+app.use_authentication().add(DecentralizedAuthenticationHandler(app))
+app.use_authorization().default_policy = Policy('authenticated', AuthenticatedRequirement())
 docs.bind_app(app)
 
 
