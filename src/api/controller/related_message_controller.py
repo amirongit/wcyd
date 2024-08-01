@@ -1,5 +1,6 @@
 from blacksheep import FromJSON, FromRoute, Response
 from blacksheep.server.controllers import post
+from guardpost import Identity
 
 from src.abc.use_case.send_message_use_case import SendMessageUseCase
 from src.api.controller.base_controller import BaseController
@@ -23,13 +24,15 @@ class RelatedMessageController(BaseController):
     @post('/')
     async def leave_message(
         self,
+        identity: Identity,
         node_identifier: FromRoute[str],
         peer_identifier: FromRoute[str],
         request_body: FromJSON[MessageTransferRequest]
     ) -> Response:
+        source: UniversalPeerIdentifier = identity['id']
 
         await self._send_use_case.execute(
-            UniversalPeerIdentifier(node=request_body.value.source.node, peer=request_body.value.source.node),
+            source,
             UniversalPeerIdentifier(node=node_identifier.value, peer=peer_identifier.value),
             request_body.value.content
         )
