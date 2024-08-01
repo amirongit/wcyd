@@ -1,6 +1,6 @@
 from uuid import UUID
 from src.type.entity import Message, Node, Peer
-from src.type.internal import EndPoint, NodeIdentifier, PeerIdentifier, PublicKey, UniversalPeerIdentifier
+from src.type.internal import EndPoint, NodeIdentifier, PeerIdentifier, Keyring, UniversalPeerIdentifier
 from test.mock.infra.mock_message_repo import MockMessageRepo
 from test.mock.infra.mock_node_client import MockNodeClient
 from test.mock.infra.mock_node_repo import MockNodeRepo
@@ -27,15 +27,15 @@ def add_external_peer(
     client: MockNodeClient,
     direct_neighbor: NodeIdentifier,
     peer: PeerIdentifier,
-    public_key: PublicKey
+    keyring: Keyring
 ) -> None:
     if direct_neighbor in client._mem_storage:
         client._mem_storage[direct_neighbor]['peers'].update(
-            {peer: {'key_provider': public_key.provider.name, 'key_value': public_key.value}}
+            {peer: {'signing_key': keyring.signing, 'encryption_key': keyring.encryption}}
         )
     else:
         client._mem_storage[direct_neighbor] = {
-            'peers': {peer: {'key_provider': public_key.provider.name, 'key_value': public_key.value}},
+            'peers': {peer: {'signing_key': keyring.signing, 'encryption_key': keyring.encryption}},
             'nodes': dict(),
             'messages': dict()
         }
@@ -47,10 +47,10 @@ async def get_internal_peer(repo: MockPeerRepo, peer_identifier: PeerIdentifier)
     return await repo.get(peer_identifier)
 
 
-def add_internal_peer(repo: MockPeerRepo, peer_identifier: PeerIdentifier, public_key: PublicKey) -> None:
+def add_internal_peer(repo: MockPeerRepo, peer_identifier: PeerIdentifier, public_key: Keyring) -> None:
     assert peer_identifier not in repo._mem_storage, 'peer already exists'
 
-    repo._mem_storage[peer_identifier] = {'key_provider': public_key.provider.name, 'key_value': public_key.value}
+    repo._mem_storage[peer_identifier] = {'signing_key': public_key.signing, 'encryption_key': public_key.encryption}
 
 
 async def get_internal_neighbor(repo: MockNodeRepo, identifier: NodeIdentifier) -> Node:

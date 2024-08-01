@@ -1,10 +1,9 @@
 from typing import TypedDict
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from pydantic.networks import AnyUrl
 from src.abc.infra.inode_client import INodeClient
-from src.type.enum import AsymmetricCryptographyProvider
-from src.type.internal import EndPoint, NodeIdentifier, PeerIdentifier, PublicKey, UniversalPeerIdentifier
+from src.type.internal import EndPoint, NodeIdentifier, PeerIdentifier, Keyring, UniversalPeerIdentifier
 from src.type.entity import Node, Peer
 from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
 
@@ -14,8 +13,8 @@ class MockClientNodeObjectModel(TypedDict):
 
 
 class MockClientPeerObjectModel(TypedDict):
-    key_provider: str
-    key_value: str
+    signing_key: str
+    encryption_key: str
 
 
 class MockClientMessageObjectModel(TypedDict):
@@ -59,9 +58,9 @@ class MockNodeClient(INodeClient):
             raise DoesNotExist
         return Peer(
             identifier=identifier,
-            public_key=PublicKey(
-                provider=AsymmetricCryptographyProvider[obj['key_provider']],
-                value=obj['key_value']
+            keyring=Keyring(
+                signing=obj['signing_key'],
+                encryption=obj['encryption_key']
             )
         )
 

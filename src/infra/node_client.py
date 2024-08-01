@@ -3,8 +3,7 @@ from aiohttp import ClientSession
 from pydantic import AnyUrl
 
 from src.abc.infra.inode_client import INodeClient
-from src.type.enum import AsymmetricCryptographyProvider
-from src.type.internal import EndPoint, NodeIdentifier, PublicKey, UniversalPeerIdentifier
+from src.type.internal import EndPoint, NodeIdentifier, Keyring, UniversalPeerIdentifier
 from src.type.entity import Node, Peer
 from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
 
@@ -19,14 +18,14 @@ class APIClientUniversalIdentifierObjectModel(TypedDict):
     peer: str
 
 
-class APIClientPublicKeyObjectModel(TypedDict):
-    provider: str
-    value: str
+class APIClientKeyringObjectModel(TypedDict):
+    signing: str
+    encryption: str
 
 
 class APIClientPeerObjectModel(TypedDict):
     identifier: APIClientUniversalIdentifierObjectModel
-    public_key: APIClientPublicKeyObjectModel
+    keyring: APIClientKeyringObjectModel
 
 
 class APIClientMessageObjectModel(TypedDict):
@@ -78,9 +77,9 @@ class NodeClient(INodeClient):
                                 peer=body['identifier']['peer'],
                                 node=body['identifier']['node']
                             ),
-                            public_key=PublicKey(
-                                provider=AsymmetricCryptographyProvider[body['public_key']['provider']],
-                                value=body['public_key']['value']
+                            keyring=Keyring(
+                                signing=body['keyring']['signing'],
+                                encryption=body['keyring']['encryption']
                             )
                         )
                     case 404:

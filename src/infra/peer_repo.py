@@ -5,14 +5,13 @@ from redis.asyncio import Redis
 from src.abc.infra.ipeer_repo import IPeerRepo
 from src.settings import NodeSettings
 from src.type.entity import Peer
-from src.type.enum import AsymmetricCryptographyProvider
 from src.type.exception import AlreadyExists, DoesNotExist
-from src.type.internal import PeerIdentifier, PublicKey, UniversalPeerIdentifier
+from src.type.internal import PeerIdentifier, Keyring, UniversalPeerIdentifier
 
 
 class RedisRepoPeerObjectModel(TypedDict):
-    key_provider: str
-    key_value: str
+    signing_key: str
+    encryption_key: str
 
 
 class PeerRepo(IPeerRepo):
@@ -32,9 +31,9 @@ class PeerRepo(IPeerRepo):
         ):
             return Peer(
                 identifier=UniversalPeerIdentifier(node=self._settigns.IDENTIFIER, peer=identifier),
-                public_key=PublicKey(
-                    provider=AsymmetricCryptographyProvider[obj['key_provider']],
-                    value=obj['key_value']
+                keyring=Keyring(
+                    signing=obj['signing_key'],
+                    encryption=obj['encryption_key'],
                 )
             )
 
@@ -43,11 +42,11 @@ class PeerRepo(IPeerRepo):
     async def exists(self, identifier: PeerIdentifier) -> bool:
         return len(await self._connection.keys(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier))) == 1
 
-    async def create(self, identifier: PeerIdentifier, public_key: PublicKey) -> None:
+    async def create(self, identifier: PeerIdentifier, keyring: Keyring) -> None:
         if await self.exists(identifier):
             raise AlreadyExists
 
-        obj: RedisRepoPeerObjectModel = {'key_provider': public_key.provider.name, 'key_value': public_key.value}
+        obj: RedisRepoPeerObjectModel = {'signing_key': keyring.signing, 'encryption_key': keyring.encryption}
         await self._connection.hmset(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier), obj) # type: ignore
 
     async def delete(self, identifier: PeerIdentifier) -> None:

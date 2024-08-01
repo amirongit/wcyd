@@ -2,7 +2,7 @@ from uuid import UUID
 
 from pydantic.dataclasses import dataclass
 
-from src.type.internal import NodeIdentifier, EndPoint, PublicKey, UniversalPeerIdentifier
+from src.type.internal import NodeIdentifier, EndPoint, Keyring, UniversalPeerIdentifier
 
 
 @dataclass(kw_only=True)
@@ -14,7 +14,7 @@ class Node:
 @dataclass(kw_only=True)
 class Peer:
     identifier: UniversalPeerIdentifier
-    public_key: PublicKey
+    keyring: Keyring
 
 
 @dataclass(kw_only=True)

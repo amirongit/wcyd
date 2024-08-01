@@ -721,3 +721,4 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/python,vim,jetbrains,visualstudio,visualstudiocode
 
 settings.json
+dev-scripts.py

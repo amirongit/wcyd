@@ -1,11 +1,12 @@
 from blacksheep import FromJSON, FromRoute, FromQuery, Response
+from blacksheep.server.authorization import allow_anonymous
 from blacksheep.server.controllers import post, get
 from blacksheep.server.openapi.common import ContentInfo, ResponseInfo
 
 from src.abc.use_case.connect_node_use_case import ConnectNodeUseCase
 from src.abc.use_case.find_node_use_case import FindNodeUseCase
 from src.api.controller.base_controller import BaseController
-from src.api.docs import docs
+from src.api.docs import docs, unsecure_handler
 from src.api.io_type.node_io import NodeModel
 
 
@@ -36,8 +37,10 @@ class NodeController(BaseController):
             200: ResponseInfo('information of the queried node', content=[ContentInfo(NodeModel)]),
             404: 'not found',
             409: 'already answered'
-        }
+        },
+        on_created=unsecure_handler
     )
+    @allow_anonymous()
     @get('/{node_identifier}')
     async def get_node(self, node_identifier: FromRoute[str], questioners: FromQuery[set[str]]) -> Response:
 
