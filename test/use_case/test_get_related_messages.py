@@ -62,7 +62,7 @@ class TestSendMessageUseCase(IsolatedAsyncioTestCase):
             self._settings
         )
 
-    async def test_internal_message(self):
+    async def test_internal_message(self) -> None:
         content = 'sample-content'
         source = UniversalPeerIdentifier(peer=self.EXTERNAL_PEER_IDENTIFIER, node=self.EXISTING_NEIGHBOR_IDENTIFIER)
         target = UniversalPeerIdentifier(peer=self.EXISTING_NEIGHBOR_IDENTIFIER, node=self._settings.IDENTIFIER)
@@ -77,7 +77,7 @@ class TestSendMessageUseCase(IsolatedAsyncioTestCase):
         self.assertEqual(messages[0].target.node, target.node)
         self.assertEqual(messages[0].target.peer, target.peer)
 
-    async def test_external_message(self):
+    async def test_external_message(self) -> None:
         content = 'sample-content'
         target = UniversalPeerIdentifier(peer=self.EXTERNAL_PEER_IDENTIFIER, node=self.EXISTING_NEIGHBOR_IDENTIFIER)
         source = UniversalPeerIdentifier(peer=self.EXISTING_NEIGHBOR_IDENTIFIER, node=self._settings.IDENTIFIER)
