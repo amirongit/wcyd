@@ -16,3 +16,5 @@ the swagger client can be used for now; don't have a plan (& urge) to right a us
 ## when
 these should be done in order to have an rc release (could be updated)
 - integration tests
+these should be done in order to have an actual release (could be updated)
+- have a security expert review the code & flows
