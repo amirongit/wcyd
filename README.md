@@ -5,7 +5,7 @@ a desperate attempt to rebel
 a decentralized messenger designed to bypass blockages which intentionally avoids having a single point of failure or downtime caused by censorship
 
 ## how does
-four key concepts
+four key concepts (network is the fourth, nerds)
 - messages: encrypted or raw data in text or string format (the only supported data type) sent from a source peer to a target peer
 - peers:  users with two pairs of asymmetrical keys (one for authentication & one for encryption) registered in a node
 - nodes: instances of the software that manage messages & peers; nodes can connect to each other to form a network, authenticate peers (directly or indirectly), exchange data about themselves & their peers & act on behalf of other peers if necessary
