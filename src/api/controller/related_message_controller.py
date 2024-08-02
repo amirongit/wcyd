@@ -1,4 +1,4 @@
-from blacksheep import FromJSON, FromRoute, Response
+from blacksheep import FromJSON, FromRoute, Request, Response
 from blacksheep.server.controllers import post
 from guardpost import Identity
 
@@ -27,14 +27,17 @@ class RelatedMessageController(BaseController):
         identity: Identity,
         node_identifier: FromRoute[str],
         peer_identifier: FromRoute[str],
-        request_body: FromJSON[MessageTransferRequest]
+        request_body: FromJSON[MessageTransferRequest],
+        request: Request
     ) -> Response:
         source: UniversalPeerIdentifier = identity['id']
+        credentials: PeerCredentials = request.get_first_header(b'Authorization').decode() # type: ignore
 
         await self._send_use_case.execute(
             source,
             UniversalPeerIdentifier(node=node_identifier.value, peer=peer_identifier.value),
-            request_body.value.content
+            request_body.value.content,
+            credentials
         )
 
         return self.created()

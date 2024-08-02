@@ -25,9 +25,7 @@ class MessageController(BaseController):
     @get('/')
     async def get_related_messages(self, identity: Identity, request: Request) -> Response:
         target: UniversalPeerIdentifier = identity['id']
-
-        header_value: bytes = request.get_first_header(b'Authorization') # type: ignore
-        credentials: PeerCredentials = header_value.decode()
+        credentials: PeerCredentials = request.get_first_header(b'Authorization').decode() # type: ignore
 
         return self.ok(
             MessageModel(
