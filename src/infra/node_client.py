@@ -1,11 +1,14 @@
 from typing import TypedDict
+from uuid import UUID
+
 from aiohttp import ClientSession
 from pydantic import AnyUrl
 
 from src.abc.infra.inode_client import INodeClient
-from src.type.internal import EndPoint, NodeIdentifier, Keyring, UniversalPeerIdentifier
-from src.type.entity import Node, Peer
-from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
+from src.type.internal import EndPoint, NodeIdentifier, Keyring, PeerCredentials, UniversalPeerIdentifier
+from src.type.entity import Message, Node, Peer
+from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist, UnAuthenticated
+from src.utils import AuthUtils
 
 
 class APIClientNodeObjectModel(TypedDict):
@@ -28,7 +31,12 @@ class APIClientPeerObjectModel(TypedDict):
     keyring: APIClientKeyringObjectModel
 
 
-class APIClientMessageObjectModel(TypedDict):
+class APIClientShallowMessageObjectModel(TypedDict):
+    content: str
+
+
+class APIClientMessageObjectMode(TypedDict):
+    identifier: str
     source: APIClientUniversalIdentifierObjectModel
     content: str
 
@@ -39,9 +47,7 @@ class NodeClient(INodeClient):
         self._session = ClientSession()
 
     async def connect_node(self, host: Node, identifier: NodeIdentifier, endpoint: EndPoint) -> None:
-
         body: APIClientNodeObjectModel = {'identifier': identifier, 'endpoint': str(endpoint)}
-
         async with self._session as sess:
             async with sess.post(f'{host.endpoint}/nodes', json=body) as resp:
                 match resp.status:
@@ -90,24 +96,49 @@ class NodeClient(INodeClient):
     async def send_message(
         self,
         host: Node,
-        source: UniversalPeerIdentifier,
+        credentials: PeerCredentials,
         target: UniversalPeerIdentifier,
         content: str
     ) -> None:
-        body: APIClientMessageObjectModel = {
-            'source': {'node': source.node, 'peer': source.peer},
-            'content': content
-        }
-
+        body: APIClientShallowMessageObjectModel = {'content': content}
         async with self._session as sess:
             async with sess.post(
                 f'{host.endpoint}/nodes/{target.node}/peers/{target.peer}/messages',
-                json=body
+                json=body,
+                headers={'Authorization': credentials}
             ) as resp:
                 match resp.status:
                     case 201:
                         pass
+                    case 401:
+                        raise UnAuthenticated
                     case 404:
                         raise DoesNotExist
                     case _:
                         raise Exception
+
+    async def get_related_messages(self, host: Node, credentials: PeerCredentials) -> list[Message]:
+        async with self._session as sess:
+            async with sess.get(
+                f'{host.endpoint}/messages', headers={'Authorization': credentials}
+            ) as resp:
+                match resp.status:
+                    case 200:
+                        body: list[APIClientMessageObjectMode] = await resp.json()
+                        target = AuthUtils.extract_identifier(credentials)
+                        return [
+                            Message(
+                                identifier=UUID(obj['identifier']),
+                                source=UniversalPeerIdentifier(
+                                    node=obj['source']['node'],
+                                    peer=obj['source']['peer']
+                                ),
+                                target=target,
+                                content=obj['content']
+                            ) for obj in body
+                        ]
+                    case 401:
+                        raise UnAuthenticated
+                    case _:
+                        raise Exception
+

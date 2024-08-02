@@ -47,6 +47,7 @@ async def inject_dependencies(app: Application) -> None:
 
 
 async def register_controllers(app: Application) -> None:
+    from src.api.controller.message_controller import MessageController
     from src.api.controller.node_controller import NodeController
     from src.api.controller.peer_controller import PeerController
     from src.api.controller.related_peer_controller import RelatedPeerController

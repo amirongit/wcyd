@@ -1,10 +1,15 @@
-from uuid import UUID
+from base64 import b64encode
+from uuid import UUID, uuid4
 from src.type.entity import Message, Node, Peer
 from src.type.internal import EndPoint, NodeIdentifier, PeerIdentifier, Keyring, UniversalPeerIdentifier
 from test.mock.infra.mock_message_repo import MockMessageRepo
 from test.mock.infra.mock_node_client import MockNodeClient
 from test.mock.infra.mock_node_repo import MockNodeRepo
 from test.mock.infra.mock_peer_repo import MockPeerRepo
+
+
+def make_auth_credentials(identifier: UniversalPeerIdentifier) -> str:
+    return b64encode(bytes(f'Basic {identifier.peer}@{identifier.node}:cant-be-tested'.encode())).decode()
 
 
 def add_external_neighbor(
@@ -86,3 +91,35 @@ def get_external_relative_messages(client: MockNodeClient, identifier: Universal
         ]
     except KeyError:
         return list()
+
+
+async def add_internal_message(
+    repo: MockMessageRepo,
+    source: UniversalPeerIdentifier,
+    target: PeerIdentifier,
+    content: str
+) -> None:
+    await repo.create(source, target, content)
+
+
+def add_external_message(
+    client: MockNodeClient,
+    source: UniversalPeerIdentifier,
+    target: UniversalPeerIdentifier,
+    content: str
+) -> None:
+    assert target.node in client._mem_storage, 'node does not exist'
+    assert target.peer in client._mem_storage[target.node]['peers'], 'peer does not exist'
+
+    if (messages := client._mem_storage[target.node]['messages'].get(target.peer)) is None:
+        client._mem_storage[target.node]['messages'][target.peer] = list()
+        messages = client._mem_storage[target.node]['messages'][target.peer]
+
+    messages.append(
+        {
+            'identifier': str(uuid4()),
+            'source_node': source.node,
+            'source_peer': source.peer,
+            'content': content
+        }
+    )

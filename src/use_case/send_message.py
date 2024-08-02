@@ -5,7 +5,7 @@ from src.abc.use_case.find_node_use_case import FindNodeUseCase
 from src.abc.use_case.send_message_use_case import SendMessageUseCase
 from src.settings import NodeSettings
 from src.type.exception import DoesNotExist
-from src.type.internal import UniversalPeerIdentifier
+from src.type.internal import PeerCredentials, UniversalPeerIdentifier
 
 
 class SendMessage(SendMessageUseCase):
@@ -23,11 +23,17 @@ class SendMessage(SendMessageUseCase):
         self._message_repo = message_repo
         self._settings = node_settings
 
-    async def execute(self, source: UniversalPeerIdentifier, target: UniversalPeerIdentifier, content: str) -> None:
+    async def execute(
+        self,
+        source: UniversalPeerIdentifier,
+        target: UniversalPeerIdentifier,
+        content: str,
+        credentials: PeerCredentials
+    ) -> None:
         if target.node != self._settings.IDENTIFIER:
             await self._node_client.send_message(
                 await self._find_node_use_case.execute(target.node),
-                source,
+                credentials,
                 target,
                 content
             )

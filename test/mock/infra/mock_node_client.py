@@ -1,11 +1,13 @@
 from typing import TypedDict
-from uuid import uuid4
+from uuid import uuid4, UUID
 
 from pydantic.networks import AnyUrl
+
 from src.abc.infra.inode_client import INodeClient
-from src.type.internal import EndPoint, NodeIdentifier, PeerIdentifier, Keyring, UniversalPeerIdentifier
-from src.type.entity import Node, Peer
+from src.type.internal import EndPoint, NodeIdentifier, PeerCredentials, PeerIdentifier, Keyring, UniversalPeerIdentifier
+from src.type.entity import Node, Peer, Message
 from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
+from src.utils import AuthUtils
 
 
 class MockClientNodeObjectModel(TypedDict):
@@ -51,11 +53,13 @@ class MockNodeClient(INodeClient):
 
         if (obj := self._mem_storage[host.identifier]['nodes'].get(identifier)) is None:
             raise DoesNotExist
+
         return Node(identifier=identifier, endpoint=AnyUrl(obj['endpoint']))
 
     async def find_peer(self, host: Node, identifier: UniversalPeerIdentifier) -> Peer:
         if (obj := self._mem_storage[host.identifier]['peers'].get(identifier.peer)) is None:
             raise DoesNotExist
+
         return Peer(
             identifier=identifier,
             keyring=Keyring(
@@ -67,7 +71,7 @@ class MockNodeClient(INodeClient):
     async def send_message(
         self,
         host: Node,
-        source: UniversalPeerIdentifier,
+        credentials: PeerCredentials,
         target: UniversalPeerIdentifier,
         content: str
     ) -> None:
@@ -78,6 +82,7 @@ class MockNodeClient(INodeClient):
             self._mem_storage[target.node]['messages'][target.peer] = list()
             messages = self._mem_storage[target.node]['messages'][target.peer]
 
+        source = AuthUtils.extract_identifier(credentials)
         messages.append(
             {
                 'identifier': str(uuid4()),
@@ -86,3 +91,21 @@ class MockNodeClient(INodeClient):
                 'content': content
             }
         )
+
+    async def get_related_messages(self, host: Node, credentials: PeerCredentials) -> list[Message]:
+        target = AuthUtils.extract_identifier(credentials)
+
+        if target.peer not in self._mem_storage[target.node]['peers']:
+            raise DoesNotExist
+
+        if (messages := self._mem_storage[target.node]['messages'].get(target.peer)) is None:
+            return list()
+
+        return [
+            Message(
+                identifier=UUID(obj['identifier']),
+                source=UniversalPeerIdentifier(peer=obj['source_peer'], node=obj['source_node']),
+                target=target,
+                content=obj['content']
+            ) for obj in messages
+        ]
