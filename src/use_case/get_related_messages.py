@@ -27,7 +27,6 @@ class GetRelatedMessages(GetRelatedMessagesUseCase):
         if identifier.node != self._settings.IDENTIFIER:
             return await self._client.get_related_messages(
                 await self._find_node_use_case.execute(identifier.node),
-                identifier,
                 credentials
             )
 

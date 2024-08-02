@@ -1,3 +1,4 @@
+from base64 import b64encode
 from unittest import IsolatedAsyncioTestCase
 
 from pydantic import AnyUrl
@@ -16,7 +17,8 @@ from test.utils import (
     add_internal_neighbor,
     add_internal_peer,
     get_external_relative_messages,
-    get_internal_relative_messages
+    get_internal_relative_messages,
+    make_auth_credentials
 )
 
 
@@ -63,23 +65,22 @@ class TestSendMessageUseCase(IsolatedAsyncioTestCase):
         )
 
     async def test_normal(self) -> None:
-        source_node = 'source-node'
-        source_peer = 'source-peer'
+        source = UniversalPeerIdentifier(node='source-node', peer='source-peer')
         content = 'sample content'
 
         await self._use_case.execute(
-            UniversalPeerIdentifier(node=source_node, peer=source_peer),
+            source,
             UniversalPeerIdentifier(node=self._settings.IDENTIFIER, peer=self.EXISTING_PEER_IDENTIFIER),
             content,
-            f'Basic {source_peer}@{source_node}:not-being-tested'
+            make_auth_credentials(source)
         )
 
         messages = await get_internal_relative_messages(self._mock_message_repo, self.EXISTING_PEER_IDENTIFIER)
 
         self.assertEqual(len(messages), 1)
         self.assertEqual(messages[0].content, content)
-        self.assertEqual(messages[0].source.node, source_node)
-        self.assertEqual(messages[0].source.peer, source_peer)
+        self.assertEqual(messages[0].source.node, source.node)
+        self.assertEqual(messages[0].source.peer, source.peer)
 
     async def test_absent_identifier(self) -> None:
         with self.assertRaises(DoesNotExist):
@@ -87,25 +88,19 @@ class TestSendMessageUseCase(IsolatedAsyncioTestCase):
                 UniversalPeerIdentifier(node='not-being-tested', peer='not-being-tested'),
                 UniversalPeerIdentifier(node=self._settings.IDENTIFIER, peer='absent-identifier'),
                 'not-being-tested',
-                f'Basic not-being-tested@not-being-tested:not-being-tested'
+                make_auth_credentials(UniversalPeerIdentifier(node='not-being-tested', peer='not-being-tested'))
             )
 
     async def test_external_peer(self) -> None:
-        source_node = 'source-node'
-        source_peer = 'source-peer'
+        source = UniversalPeerIdentifier(node='source-node', peer='source-peer')
         target = UniversalPeerIdentifier(node=self.EXISTING_NEIGHBOR_IDENTIFIER, peer=self.EXTERNAL_PEER_IDENTIFIER)
         content = 'sample content'
 
-        await self._use_case.execute(
-            UniversalPeerIdentifier(node=source_node, peer=source_peer),
-            target,
-            content,
-            f'Basic {source_peer}@{source_node}:not-being-tested'
-        )
+        await self._use_case.execute(source, target, content, make_auth_credentials(source))
 
         messages = get_external_relative_messages(self._mock_node_client, target)
 
         self.assertEqual(len(messages), 1)
         self.assertEqual(messages[0].content, content)
-        self.assertEqual(messages[0].source.node, source_node)
-        self.assertEqual(messages[0].source.peer, source_peer)
+        self.assertEqual(messages[0].source.node, source.node)
+        self.assertEqual(messages[0].source.peer, source.peer)

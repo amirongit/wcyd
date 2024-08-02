@@ -8,6 +8,7 @@ from src.abc.infra.inode_client import INodeClient
 from src.type.internal import EndPoint, NodeIdentifier, Keyring, PeerCredentials, UniversalPeerIdentifier
 from src.type.entity import Message, Node, Peer
 from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist, UnAuthenticated
+from src.utils import AuthUtils
 
 
 class APIClientNodeObjectModel(TypedDict):
@@ -116,12 +117,7 @@ class NodeClient(INodeClient):
                     case _:
                         raise Exception
 
-    async def get_related_messages(
-        self,
-        host: Node,
-        target: UniversalPeerIdentifier,
-        credentials: PeerCredentials
-    ) -> list[Message]:
+    async def get_related_messages(self, host: Node, credentials: PeerCredentials) -> list[Message]:
         async with self._session as sess:
             async with sess.get(
                 f'{host.endpoint}/messages', headers={'Authorization': credentials}
@@ -129,6 +125,7 @@ class NodeClient(INodeClient):
                 match resp.status:
                     case 200:
                         body: list[APIClientMessageObjectMode] = await resp.json()
+                        target = AuthUtils.extract_identifier(credentials)
                         return [
                             Message(
                                 identifier=UUID(obj['identifier']),
@@ -144,3 +141,4 @@ class NodeClient(INodeClient):
                         raise UnAuthenticated
                     case _:
                         raise Exception
+

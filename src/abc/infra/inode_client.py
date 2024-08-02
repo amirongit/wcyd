@@ -25,9 +25,4 @@ class INodeClient(ABC):
     ) -> None: ...
 
     @abstractmethod
-    async def get_related_messages(
-        self,
-        host: Node,
-        target: UniversalPeerIdentifier,
-        credentials: PeerCredentials
-    ) -> list[Message]: ...
+    async def get_related_messages(self, host: Node, credentials: PeerCredentials) -> list[Message]: ...

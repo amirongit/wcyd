@@ -7,6 +7,7 @@ from src.abc.infra.inode_client import INodeClient
 from src.type.internal import EndPoint, NodeIdentifier, PeerCredentials, PeerIdentifier, Keyring, UniversalPeerIdentifier
 from src.type.entity import Node, Peer, Message
 from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
+from src.utils import AuthUtils
 
 
 class MockClientNodeObjectModel(TypedDict):
@@ -81,7 +82,7 @@ class MockNodeClient(INodeClient):
             self._mem_storage[target.node]['messages'][target.peer] = list()
             messages = self._mem_storage[target.node]['messages'][target.peer]
 
-        source = self._authenticated_credentials(credentials)
+        source = AuthUtils.extract_identifier(credentials)
         messages.append(
             {
                 'identifier': str(uuid4()),
@@ -91,12 +92,9 @@ class MockNodeClient(INodeClient):
             }
         )
 
-    async def get_related_messages(
-        self,
-        host: Node,
-        target: UniversalPeerIdentifier,
-        credentials: PeerCredentials
-    ) -> list[Message]:
+    async def get_related_messages(self, host: Node, credentials: PeerCredentials) -> list[Message]:
+        target = AuthUtils.extract_identifier(credentials)
+
         if target.peer not in self._mem_storage[target.node]['peers']:
             raise DoesNotExist
 
@@ -111,8 +109,3 @@ class MockNodeClient(INodeClient):
                 content=obj['content']
             ) for obj in messages
         ]
-
-    @staticmethod
-    def _authenticated_credentials(credentials: PeerCredentials) -> UniversalPeerIdentifier:
-        peer_identifier, node_identifier = credentials.removeprefix('Basic ').split(':')[0].split('@')
-        return UniversalPeerIdentifier(peer=peer_identifier, node=node_identifier)
