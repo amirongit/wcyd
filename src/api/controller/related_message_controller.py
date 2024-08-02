@@ -13,8 +13,8 @@ class RelatedMessageController(BaseController):
 
     ROUTE = '/nodes/{node_identifier}/peers/{peer_identifier}/messages'
 
-    def __init__(self, send_use_case: SendMessageUseCase) -> None:
-        self._send_use_case = send_use_case
+    def __init__(self, send_message_use_case: SendMessageUseCase,) -> None:
+        self._send_use_case = send_message_use_case
 
     @docs(
         tags=['messages'],
