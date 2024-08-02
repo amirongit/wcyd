@@ -10,6 +10,7 @@ from pydantic.dataclasses import dataclass
 # TODO: use the new syntax when mypy releases THE FUCKING SUPPORT
 NodeIdentifier: TypeAlias = str
 PeerIdentifier: TypeAlias = str
+PeerCredentials: TypeAlias = str
 EndPoint: TypeAlias = AnyUrl
 
 
