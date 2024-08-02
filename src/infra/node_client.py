@@ -104,7 +104,7 @@ class NodeClient(INodeClient):
             async with sess.post(
                 f'{host.endpoint}/nodes/{target.node}/peers/{target.peer}/messages',
                 json=body,
-                headers={'Authorization': f'Basic {credentials}'}
+                headers={'Authorization': credentials}
             ) as resp:
                 match resp.status:
                     case 201:
@@ -124,7 +124,7 @@ class NodeClient(INodeClient):
     ) -> list[Message]:
         async with self._session as sess:
             async with sess.get(
-                f'{host.endpoint}/messages', headers={'Authorization': f'Basic {credentials}'}
+                f'{host.endpoint}/messages', headers={'Authorization': credentials}
             ) as resp:
                 match resp.status:
                     case 200:
