@@ -70,7 +70,8 @@ class TestSendMessageUseCase(IsolatedAsyncioTestCase):
         await self._use_case.execute(
             UniversalPeerIdentifier(node=source_node, peer=source_peer),
             UniversalPeerIdentifier(node=self._settings.IDENTIFIER, peer=self.EXISTING_PEER_IDENTIFIER),
-            content
+            content,
+            f'Basic {source_peer}@{source_node}:not-being-tested'
         )
 
         messages = await get_internal_relative_messages(self._mock_message_repo, self.EXISTING_PEER_IDENTIFIER)
@@ -85,7 +86,8 @@ class TestSendMessageUseCase(IsolatedAsyncioTestCase):
             await self._use_case.execute(
                 UniversalPeerIdentifier(node='not-being-tested', peer='not-being-tested'),
                 UniversalPeerIdentifier(node=self._settings.IDENTIFIER, peer='absent-identifier'),
-                'not-being-tested'
+                'not-being-tested',
+                f'Basic not-being-tested@not-being-tested:not-being-tested'
             )
 
     async def test_external_peer(self) -> None:
@@ -94,7 +96,12 @@ class TestSendMessageUseCase(IsolatedAsyncioTestCase):
         target = UniversalPeerIdentifier(node=self.EXISTING_NEIGHBOR_IDENTIFIER, peer=self.EXTERNAL_PEER_IDENTIFIER)
         content = 'sample content'
 
-        await self._use_case.execute(UniversalPeerIdentifier(node=source_node, peer=source_peer), target, content)
+        await self._use_case.execute(
+            UniversalPeerIdentifier(node=source_node, peer=source_peer),
+            target,
+            content,
+            f'Basic {source_peer}@{source_node}:not-being-tested'
+        )
 
         messages = get_external_relative_messages(self._mock_node_client, target)
 
