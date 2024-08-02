@@ -3,6 +3,8 @@ from base64 import b64decode
 from nacl.encoding import Base64Encoder
 from nacl.signing import VerifyKey as NACLVerifyKey, SigningKey as NACLSigningKey
 
+from src.type.internal import PeerCredentials, UniversalPeerIdentifier
+
 
 class EncryptionUtils:
     @staticmethod
@@ -15,3 +17,12 @@ class EncryptionUtils:
 
     @staticmethod
     def decrypt_base64(encrypted_message: str) -> str: return b64decode(encrypted_message).decode()
+
+
+class AuthUtils:
+    @staticmethod
+    def extract_identifier(credentials: PeerCredentials) -> UniversalPeerIdentifier:
+        peer_identifier, node_identifier = EncryptionUtils.decrypt_base64(
+            credentials
+        ).removeprefix('Basic ').split(':')[0].split('@')
+        return UniversalPeerIdentifier(peer=peer_identifier, node=node_identifier)

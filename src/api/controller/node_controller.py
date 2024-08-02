@@ -21,8 +21,10 @@ class NodeController(BaseController):
     @docs(
         tags=['nodes'],
         summary='register provided node as neighbor',
-        responses={201: 'registeration done successfully', 409: 'already connected'}
+        responses={201: 'registeration done successfully', 409: 'already connected'},
+        on_created=unsecure_handler
     )
+    @allow_anonymous()
     @post('/')
     async def register_node(self, request_body: FromJSON[NodeModel]) -> Response:
 

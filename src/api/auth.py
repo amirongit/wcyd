@@ -19,7 +19,7 @@ class DecentralizedAuthenticationHandler(AuthenticationHandler):
         d. if the timestamp is within the range of +/- `settings.AUTHENTICATION.TOKEN_TIME_WINDOW`,
            the peer is authenticated within the scope of the request
 
-    * Authorization header format: Basic Base64.encode(peer@node:hex(signed_timestamp))
+    * header format: Basic b64encode(peer@node:hex(signed_timestamp))
     '''
 
     def __init__(self, app: Application) -> None:
