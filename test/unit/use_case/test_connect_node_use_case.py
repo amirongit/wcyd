@@ -5,9 +5,9 @@ from pydantic import AnyUrl
 from src.settings import NodeSettings
 from src.type.exception import AlreadyExists
 from src.use_case.connect_node import ConnectNode
-from test.mock.infra.mock_node_client import MockNodeClient
-from test.mock.infra.mock_node_repo import MockNodeRepo
-from test.utils import get_internal_neighbor, add_internal_neighbor, add_external_neighbor
+from test.unit.mock.infra.mock_node_client import MockNodeClient
+from test.unit.mock.infra.mock_node_repo import MockNodeRepo
+from test.unit.utils import get_internal_neighbor, add_external_neighbor
 
 
 class TestConnectNodeUseCase(IsolatedAsyncioTestCase):

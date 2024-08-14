@@ -6,10 +6,10 @@ from src.settings import NodeSettings
 from src.type.internal import Keyring, UniversalPeerIdentifier
 from src.use_case.find_node import FindNode
 from src.use_case.find_peer import FindPeer
-from test.mock.infra.mock_node_client import MockNodeClient
-from test.mock.infra.mock_node_repo import MockNodeRepo
-from test.mock.infra.mock_peer_repo import MockPeerRepo
-from test.utils import add_external_peer, add_internal_peer, add_internal_neighbor
+from test.unit.mock.infra.mock_node_client import MockNodeClient
+from test.unit.mock.infra.mock_node_repo import MockNodeRepo
+from test.unit.mock.infra.mock_peer_repo import MockPeerRepo
+from test.unit.utils import add_external_peer, add_internal_peer, add_internal_neighbor
 
 
 class TestFindPeerUseCase(IsolatedAsyncioTestCase):

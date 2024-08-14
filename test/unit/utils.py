@@ -2,10 +2,10 @@ from base64 import b64encode
 from uuid import UUID, uuid4
 from src.type.entity import Message, Node, Peer
 from src.type.internal import EndPoint, NodeIdentifier, PeerIdentifier, Keyring, UniversalPeerIdentifier
-from test.mock.infra.mock_message_repo import MockMessageRepo
-from test.mock.infra.mock_node_client import MockNodeClient
-from test.mock.infra.mock_node_repo import MockNodeRepo
-from test.mock.infra.mock_peer_repo import MockPeerRepo
+from test.unit.mock.infra.mock_message_repo import MockMessageRepo
+from test.unit.mock.infra.mock_node_client import MockNodeClient
+from test.unit.mock.infra.mock_node_repo import MockNodeRepo
+from test.unit.mock.infra.mock_peer_repo import MockPeerRepo
 
 
 def make_auth_credentials(identifier: UniversalPeerIdentifier) -> str:
