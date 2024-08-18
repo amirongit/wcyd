@@ -12,10 +12,3 @@ four key concepts (network is the fourth, nerds)
 
 ## how to
 the swagger client can be used for now; don't have a plan (& urge) to right a user interface
-
-## when
-these should be done in order to have an rc release (could be updated)
-- integration tests
-<!-- can you stop being a list, sir?! -->
-these should be done in order to have an actual release (could be updated)
-- have a security expert review the code & flows
