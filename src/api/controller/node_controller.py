@@ -7,7 +7,7 @@ from src.abc.use_case.connect_node_use_case import ConnectNodeUseCase
 from src.abc.use_case.find_node_use_case import FindNodeUseCase
 from src.api.controller.base_controller import BaseController
 from src.api.docs import docs, unsecure_handler
-from src.api.io_type.node_io import NodeModel
+from src.api.io_type.node_io import NodeCreationRequest, NodeModel
 
 
 class NodeController(BaseController):
@@ -26,7 +26,7 @@ class NodeController(BaseController):
     )
     @allow_anonymous()
     @post('/')
-    async def register_node(self, request_body: FromJSON[NodeModel]) -> Response:
+    async def register_node(self, request_body: FromJSON[NodeCreationRequest]) -> Response:
 
         await self._connect_use_case.execute(request_body.value.identifier, request_body.value.endpoint)
 
@@ -48,4 +48,4 @@ class NodeController(BaseController):
 
         node = await self._find_use_case.execute(node_identifier.value, questioners.value)
 
-        return self.ok(NodeModel(identifier=node.identifier, endpoint=node.endpoint))
+        return self.ok(NodeModel(identifier=node.identifier, endpoint=str(node.endpoint)))
