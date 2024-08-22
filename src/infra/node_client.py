@@ -62,7 +62,7 @@ class NodeClient(INodeClient):
         async with self._session as sess:
             async with sess.get(
                 f'{host.endpoint}api/v0/nodes/{identifier}',
-                params={'questioners': questioners}
+                params=list(map(lambda q: ('questioners', q), questioners)) # type: ignore
             ) as resp:
                 match resp.status:
                     case 200:
