@@ -49,7 +49,7 @@ class NodeClient(INodeClient):
     async def connect_node(self, host: Node, identifier: NodeIdentifier, endpoint: EndPoint) -> None:
         body: APIClientNodeObjectModel = {'identifier': identifier, 'endpoint': str(endpoint)}
         async with self._session as sess:
-            async with sess.post(f'{host.endpoint}/nodes', json=body) as resp:
+            async with sess.post(f'{host.endpoint}api/v0/nodes', json=body) as resp:
                 match resp.status:
                     case 201:
                         return None
@@ -60,7 +60,10 @@ class NodeClient(INodeClient):
 
     async def find_node(self, host: Node, questioners: set[NodeIdentifier], identifier: NodeIdentifier) -> Node:
         async with self._session as sess:
-            async with sess.get(f'{host.endpoint}/nodes/{identifier}', params={'questioners': questioners}) as resp:
+            async with sess.get(
+                f'{host.endpoint}api/v0/nodes/{identifier}',
+                params=list(map(lambda q: ('questioners', q), questioners)) # type: ignore
+            ) as resp:
                 match resp.status:
                     case 200:
                         body: APIClientNodeObjectModel = await resp.json()
@@ -74,7 +77,7 @@ class NodeClient(INodeClient):
 
     async def find_peer(self, host: Node, identifier: UniversalPeerIdentifier) -> Peer:
         async with self._session as sess:
-            async with sess.get(f'{host.endpoint}/nodes/{identifier.node}/peers/{identifier.peer}') as resp:
+            async with sess.get(f'{host.endpoint}api/v0/nodes/{identifier.node}/peers/{identifier.peer}') as resp:
                 match resp.status:
                     case 200:
                         body: APIClientPeerObjectModel = await resp.json()
@@ -103,7 +106,7 @@ class NodeClient(INodeClient):
         body: APIClientShallowMessageObjectModel = {'content': content}
         async with self._session as sess:
             async with sess.post(
-                f'{host.endpoint}/nodes/{target.node}/peers/{target.peer}/messages',
+                f'{host.endpoint}api/v0/nodes/{target.node}/peers/{target.peer}/messages',
                 json=body,
                 headers={'Authorization': credentials}
             ) as resp:
@@ -120,7 +123,7 @@ class NodeClient(INodeClient):
     async def get_related_messages(self, host: Node, credentials: PeerCredentials) -> list[Message]:
         async with self._session as sess:
             async with sess.get(
-                f'{host.endpoint}/messages', headers={'Authorization': credentials}
+                f'{host.endpoint}api/v0/messages', headers={'Authorization': credentials}
             ) as resp:
                 match resp.status:
                     case 200:

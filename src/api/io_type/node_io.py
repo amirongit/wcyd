@@ -4,6 +4,12 @@ from src.type.internal import EndPoint, NodeIdentifier
 
 
 @dataclass(kw_only=True)
-class NodeModel:
+class NodeCreationRequest:
     identifier: NodeIdentifier
     endpoint: EndPoint
+
+
+@dataclass(kw_only=True)
+class NodeModel:
+    identifier: NodeIdentifier
+    endpoint: str

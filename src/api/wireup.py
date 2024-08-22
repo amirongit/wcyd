@@ -17,6 +17,7 @@ async def inject_dependencies(app: Application) -> None:
     from src.abc.use_case.connect_node_use_case import ConnectNodeUseCase
     from src.abc.use_case.find_node_use_case import FindNodeUseCase
     from src.abc.use_case.find_peer_use_case import FindPeerUseCase
+    from src.abc.use_case.get_related_messages_use_case import GetRelatedMessagesUseCase
     from src.abc.use_case.remove_peer_use_case import RemovePeerUseCase
     from src.abc.use_case.send_message_use_case import SendMessageUseCase
     from src.infra.message_repo import MessageRepo
@@ -27,6 +28,7 @@ async def inject_dependencies(app: Application) -> None:
     from src.use_case.connect_node import ConnectNode
     from src.use_case.find_node import FindNode
     from src.use_case.find_peer import FindPeer
+    from src.use_case.get_related_messages import GetRelatedMessages
     from src.use_case.remove_peer import RemovePeer
     from src.use_case.send_message import SendMessage
     from src.settings import AuthenticationSettings, NodeSettings
@@ -42,6 +44,7 @@ async def inject_dependencies(app: Application) -> None:
     app.services.add_singleton(ConnectNodeUseCase, ConnectNode) # type: ignore
     app.services.add_singleton(FindNodeUseCase, FindNode) # type: ignore
     app.services.add_singleton(FindPeerUseCase, FindPeer) # type: ignore
+    app.services.add_singleton(GetRelatedMessagesUseCase, GetRelatedMessages) # type: ignore
     app.services.add_singleton(RemovePeerUseCase, RemovePeer) # type: ignore
     app.services.add_singleton(SendMessageUseCase, SendMessage) # type: ignore
 
