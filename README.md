@@ -11,4 +11,4 @@ four key concepts (network is the fourth, nerds)
 - nodes: instances of the software that manage messages & peers; nodes can connect to each other to form a network, authenticate peers (directly or indirectly), exchange data about themselves & their peers & act on behalf of other peers if necessary
 
 ## how to
-the swagger client can be used for now; don't have a plan (& urge) to right a user interface
+the swagger client can be used for now; don't have a plan (& urge) to write a user interface
