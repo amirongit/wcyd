@@ -27,11 +27,14 @@ class DecentralizedAuthenticationHandler(AuthenticationHandler):
         self.app = app
 
     @property
-    def _find_peer_use_case(self) -> FindPeerUseCase: return self.app.services.resolve(FindPeerUseCase)
+    def _find_peer_use_case(self) -> FindPeerUseCase:
+        return self.app.services.resolve(FindPeerUseCase)
 
     @property
-    def _settings(self) -> AuthenticationSettings: return self.app.services.resolve(AuthenticationSettings)
+    def _settings(self) -> AuthenticationSettings:
+        return self.app.services.resolve(AuthenticationSettings)
 
+    # pylint: disable=invalid-overridden-method
     async def authenticate(self, context: Request) -> Identity | None: # type: ignore
         context.identity = None
 
@@ -46,8 +49,9 @@ class DecentralizedAuthenticationHandler(AuthenticationHandler):
             now, window_range = datetime.now(), timedelta(seconds=self._settings.TIME_WINDOW)
             start, end = now - window_range, now + window_range
             given = datetime.fromtimestamp(signed_timestamp)
-            if given > start and given < end:
+            if start < given < end:
                 context.identity = Identity({'id': universal_identifier}, 'authenticated')
+        # pylint: disable=broad-exception-caught
         except Exception:
             pass
 

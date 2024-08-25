@@ -1,6 +1,6 @@
 from pydantic.dataclasses import dataclass
 
-from src.type.internal import PeerIdentifier, Keyring, UniversalPeerIdentifier
+from src.type.internal import Keyring, PeerIdentifier, UniversalPeerIdentifier
 
 
 @dataclass(kw_only=True)

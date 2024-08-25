@@ -5,9 +5,21 @@ from aiohttp import ClientSession
 from pydantic import AnyUrl
 
 from src.abc.infra.inode_client import INodeClient
-from src.type.internal import EndPoint, NodeIdentifier, Keyring, PeerCredentials, UniversalPeerIdentifier
 from src.type.entity import Message, Node, Peer
-from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist, UnAuthenticated
+from src.type.exception import (
+    AlreadyAnswered,
+    AlreadyExists,
+    DoesNotExist,
+    UnAuthenticated,
+    UnexpectedNodeResponse,
+)
+from src.type.internal import (
+    EndPoint,
+    Keyring,
+    NodeIdentifier,
+    PeerCredentials,
+    UniversalPeerIdentifier,
+)
 from src.utils import AuthUtils
 
 
@@ -56,7 +68,7 @@ class NodeClient(INodeClient):
                     case 409:
                         raise AlreadyExists
                     case _:
-                        raise Exception
+                        raise UnexpectedNodeResponse
 
     async def find_node(self, host: Node, questioners: set[NodeIdentifier], identifier: NodeIdentifier) -> Node:
         async with self._session as sess:
@@ -73,7 +85,7 @@ class NodeClient(INodeClient):
                     case 409:
                         raise AlreadyAnswered
                     case _:
-                        raise Exception
+                        raise UnexpectedNodeResponse
 
     async def find_peer(self, host: Node, identifier: UniversalPeerIdentifier) -> Peer:
         async with self._session as sess:
@@ -94,7 +106,7 @@ class NodeClient(INodeClient):
                     case 404:
                         raise DoesNotExist
                     case _:
-                        raise Exception
+                        raise UnexpectedNodeResponse
 
     async def send_message(
         self,
@@ -118,7 +130,7 @@ class NodeClient(INodeClient):
                     case 404:
                         raise DoesNotExist
                     case _:
-                        raise Exception
+                        raise UnexpectedNodeResponse
 
     async def get_related_messages(self, host: Node, credentials: PeerCredentials) -> list[Message]:
         async with self._session as sess:
@@ -143,5 +155,4 @@ class NodeClient(INodeClient):
                     case 401:
                         raise UnAuthenticated
                     case _:
-                        raise Exception
-
+                        raise UnexpectedNodeResponse

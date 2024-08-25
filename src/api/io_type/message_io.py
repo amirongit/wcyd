@@ -1,4 +1,5 @@
 from uuid import UUID
+
 from pydantic.dataclasses import dataclass
 
 from src.type.internal import UniversalPeerIdentifier

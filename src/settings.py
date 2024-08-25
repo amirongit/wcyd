@@ -1,7 +1,7 @@
 from json import loads
 
-from pydantic.dataclasses import dataclass
 from pydantic import AnyUrl, Field, RedisDsn
+from pydantic.dataclasses import dataclass
 
 
 @dataclass(kw_only=True)

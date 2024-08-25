@@ -1,7 +1,12 @@
 from abc import ABC, abstractmethod
 
-from src.type.internal import EndPoint, NodeIdentifier, PeerCredentials, UniversalPeerIdentifier
 from src.type.entity import Message, Node, Peer
+from src.type.internal import (
+    EndPoint,
+    NodeIdentifier,
+    PeerCredentials,
+    UniversalPeerIdentifier,
+)
 
 
 class INodeClient(ABC):

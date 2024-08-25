@@ -1,6 +1,6 @@
 from src.abc.infra.ipeer_repo import IPeerRepo
 from src.abc.use_case.add_peer_use_case import AddPeerUseCase
-from src.type.internal import PeerIdentifier, Keyring
+from src.type.internal import Keyring, PeerIdentifier
 
 
 class AddPeer(AddPeerUseCase):

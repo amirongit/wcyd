@@ -6,7 +6,7 @@ from src.abc.use_case.send_message_use_case import SendMessageUseCase
 from src.api.controller.base_controller import BaseController
 from src.api.docs import docs
 from src.api.io_type.message_io import MessageTransferRequest
-from src.type.internal import UniversalPeerIdentifier
+from src.type.internal import PeerCredentials, UniversalPeerIdentifier
 
 
 class RelatedMessageController(BaseController):

@@ -1,12 +1,3 @@
-from unittest import IsolatedAsyncioTestCase
-
-from pydantic import AnyUrl
-
-from src.settings import NodeSettings
-from src.type.exception import DoesNotExist
-from src.type.internal import Keyring, UniversalPeerIdentifier
-from src.use_case.find_node import FindNode
-from src.use_case.send_message import SendMessage
 from test.unit.mock.infra.mock_message_repo import MockMessageRepo
 from test.unit.mock.infra.mock_node_client import MockNodeClient
 from test.unit.mock.infra.mock_node_repo import MockNodeRepo
@@ -17,8 +8,17 @@ from test.unit.utils import (
     add_internal_peer,
     get_external_relative_messages,
     get_internal_relative_messages,
-    make_auth_credentials
+    make_auth_credentials,
 )
+from unittest import IsolatedAsyncioTestCase
+
+from pydantic import AnyUrl
+
+from src.settings import NodeSettings
+from src.type.exception import DoesNotExist
+from src.type.internal import Keyring, UniversalPeerIdentifier
+from src.use_case.find_node import FindNode
+from src.use_case.send_message import SendMessage
 
 
 class TestSendMessageUseCase(IsolatedAsyncioTestCase):

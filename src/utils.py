@@ -1,7 +1,8 @@
 from base64 import b64decode
 
 from nacl.encoding import Base64Encoder
-from nacl.signing import VerifyKey as NACLVerifyKey, SigningKey as NACLSigningKey
+from nacl.signing import SigningKey as NACLSigningKey
+from nacl.signing import VerifyKey as NACLVerifyKey
 
 from src.type.internal import PeerCredentials, UniversalPeerIdentifier
 
@@ -16,7 +17,8 @@ class EncryptionUtils:
         return NACLSigningKey(signing_key.encode(), Base64Encoder).sign(bytes(message.encode())).hex()
 
     @staticmethod
-    def decrypt_base64(encrypted_message: str) -> str: return b64decode(encrypted_message).decode()
+    def decrypt_base64(encrypted_message: str) -> str:
+        return b64decode(encrypted_message).decode()
 
 
 class AuthUtils:

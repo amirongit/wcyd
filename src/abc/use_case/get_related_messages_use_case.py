@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from src.type.internal import PeerCredentials, UniversalPeerIdentifier
 from src.type.entity import Message
+from src.type.internal import PeerCredentials, UniversalPeerIdentifier
 
 
 class GetRelatedMessagesUseCase(ABC):
