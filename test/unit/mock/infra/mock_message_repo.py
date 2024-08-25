@@ -16,14 +16,14 @@ class MockRepoMessageObjectModel(TypedDict):
 
 class MockMessageRepo(IMessageRepo):
     def __init__(self, node_settings: NodeSettings) -> None:
-        self._mem_storage: dict[PeerIdentifier, list[MockRepoMessageObjectModel]] = dict()
+        self._mem_storage: dict[PeerIdentifier, list[MockRepoMessageObjectModel]] = {}
         self._settings = node_settings
 
     async def create(self, source: UniversalPeerIdentifier, target: PeerIdentifier, content: str) -> None:
         try:
             messages = self._mem_storage[target]
         except KeyError:
-            self._mem_storage[target] = list()
+            self._mem_storage[target] = []
             messages = self._mem_storage[target]
 
         messages.append(
@@ -46,4 +46,4 @@ class MockMessageRepo(IMessageRepo):
                 ) for obj in self._mem_storage[identifier]
             ]
         except KeyError:
-            return list()
+            return []

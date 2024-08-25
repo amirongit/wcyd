@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from src.type.entity import Peer
-from src.type.internal import PeerIdentifier, Keyring
+from src.type.internal import Keyring, PeerIdentifier
 
 
 class IPeerRepo(ABC):

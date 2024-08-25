@@ -1,3 +1,6 @@
+from test.unit.mock.infra.mock_node_client import MockNodeClient
+from test.unit.mock.infra.mock_node_repo import MockNodeRepo
+from test.unit.utils import add_external_neighbor, get_internal_neighbor
 from unittest import IsolatedAsyncioTestCase
 
 from pydantic import AnyUrl
@@ -5,9 +8,6 @@ from pydantic import AnyUrl
 from src.settings import NodeSettings
 from src.type.exception import AlreadyExists
 from src.use_case.connect_node import ConnectNode
-from test.unit.mock.infra.mock_node_client import MockNodeClient
-from test.unit.mock.infra.mock_node_repo import MockNodeRepo
-from test.unit.utils import get_internal_neighbor, add_external_neighbor
 
 
 class TestConnectNodeUseCase(IsolatedAsyncioTestCase):
@@ -32,7 +32,12 @@ class TestConnectNodeUseCase(IsolatedAsyncioTestCase):
     async def test_external_duplicated_identifier(self) -> None:
         external_existing_neighbor_identifier = 'external-existing-neighbor-identifier'
         endpoint = AnyUrl('http://external-existing-neighbor:80')
-        add_external_neighbor(self._mock_node_client, external_existing_neighbor_identifier, self._settings.IDENTIFIER, self._settings.ENDPOINT)
+        add_external_neighbor(
+            self._mock_node_client,
+            external_existing_neighbor_identifier,
+            self._settings.IDENTIFIER,
+            self._settings.ENDPOINT
+        )
         await self._use_case.execute(external_existing_neighbor_identifier, endpoint)
 
     async def test_normal(self) -> None:

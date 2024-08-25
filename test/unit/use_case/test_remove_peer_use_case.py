@@ -1,3 +1,5 @@
+from test.unit.mock.infra.mock_peer_repo import MockPeerRepo
+from test.unit.utils import add_internal_peer
 from unittest import IsolatedAsyncioTestCase
 
 from pydantic import AnyUrl
@@ -6,8 +8,6 @@ from src.settings import NodeSettings
 from src.type.exception import DoesNotExist
 from src.type.internal import Keyring
 from src.use_case.remove_peer import RemovePeer
-from test.unit.mock.infra.mock_peer_repo import MockPeerRepo
-from test.unit.utils import add_internal_peer
 
 
 class TestRemovePeerUseCase(IsolatedAsyncioTestCase):

@@ -3,9 +3,9 @@ from typing import TypedDict
 from pydantic.networks import AnyUrl
 
 from src.abc.infra.inode_repo import INodeRepo
-from src.type.internal import EndPoint, NodeIdentifier
 from src.type.entity import Node
 from src.type.exception import AlreadyExists, DoesNotExist
+from src.type.internal import EndPoint, NodeIdentifier
 
 
 class MockRepoNodeObjectModel(TypedDict):
@@ -15,7 +15,7 @@ class MockRepoNodeObjectModel(TypedDict):
 class MockNodeRepo(INodeRepo):
 
     def __init__(self) -> None:
-        self._mem_storage: dict[NodeIdentifier, MockRepoNodeObjectModel] = dict()
+        self._mem_storage: dict[NodeIdentifier, MockRepoNodeObjectModel] = {}
 
     async def get(self, identifier: NodeIdentifier) -> Node:
         if (obj := self._mem_storage.get(identifier)) is not None:

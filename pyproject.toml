@@ -16,3 +16,19 @@ disallow_untyped_defs = true
 init_forbid_extra = true
 init_typed = true
 warn_required_dynamic_aliases = true
+
+[tool.pylint.imports]
+max-line-length = 120
+disable = [
+  "missing-module-docstring",
+  "missing-class-docstring",
+  "missing-function-docstring",
+  "too-few-public-methods",
+  "too-many-arguments",
+  "duplicate-code"
+]
+ignore = ["wireup.py", "settings.py"]
+
+[tool.isort]
+line_length = 90  # Specify your desired max line length
+profile = "black"  # Optional: if you're using Black's formatting style

@@ -1,4 +1,4 @@
-from typing import TypeAlias, Self
+from typing import Self, TypeAlias
 
 from nacl.encoding import Base64Encoder
 from nacl.public import PublicKey as NACLPublicKey
@@ -6,8 +6,6 @@ from nacl.signing import SigningKey as NACLSigningKey
 from pydantic import AnyUrl, model_validator
 from pydantic.dataclasses import dataclass
 
-
-# TODO: use the new syntax when mypy releases THE FUCKING SUPPORT
 NodeIdentifier: TypeAlias = str
 PeerIdentifier: TypeAlias = str
 PeerCredentials: TypeAlias = str

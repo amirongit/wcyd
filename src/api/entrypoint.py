@@ -3,9 +3,12 @@ from guardpost import Policy
 from guardpost.common import AuthenticatedRequirement
 
 from src.api.auth import DecentralizedAuthenticationHandler
-from src.api.wireup import inject_dependencies, register_controllers, register_exception_handlers
 from src.api.docs import docs
-
+from src.api.wireup import (
+    inject_dependencies,
+    register_controllers,
+    register_exception_handlers,
+)
 
 app = Application(show_error_details=False)
 

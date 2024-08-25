@@ -1,6 +1,6 @@
-from blacksheep import FromJSON, FromRoute, FromQuery, Response
+from blacksheep import FromJSON, FromQuery, FromRoute, Response
 from blacksheep.server.authorization import allow_anonymous
-from blacksheep.server.controllers import post, get
+from blacksheep.server.controllers import get, post
 from blacksheep.server.openapi.common import ContentInfo, ResponseInfo
 
 from src.abc.use_case.connect_node_use_case import ConnectNodeUseCase

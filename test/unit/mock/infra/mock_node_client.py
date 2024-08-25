@@ -1,12 +1,19 @@
 from typing import TypedDict
-from uuid import uuid4, UUID
+from uuid import UUID, uuid4
 
 from pydantic.networks import AnyUrl
 
 from src.abc.infra.inode_client import INodeClient
-from src.type.internal import EndPoint, NodeIdentifier, PeerCredentials, PeerIdentifier, Keyring, UniversalPeerIdentifier
-from src.type.entity import Node, Peer, Message
+from src.type.entity import Message, Node, Peer
 from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
+from src.type.internal import (
+    EndPoint,
+    Keyring,
+    NodeIdentifier,
+    PeerCredentials,
+    PeerIdentifier,
+    UniversalPeerIdentifier,
+)
 from src.utils import AuthUtils
 
 
@@ -35,7 +42,7 @@ class DirectNeighborMemStorage(TypedDict):
 class MockNodeClient(INodeClient):
 
     def __init__(self) -> None:
-        self._mem_storage: dict[NodeIdentifier, DirectNeighborMemStorage] = dict()
+        self._mem_storage: dict[NodeIdentifier, DirectNeighborMemStorage] = {}
 
     async def connect_node(self, host: Node, identifier: NodeIdentifier, endpoint: EndPoint) -> None:
         if host.identifier in self._mem_storage and identifier in self._mem_storage[host.identifier]['nodes']:
@@ -43,8 +50,8 @@ class MockNodeClient(INodeClient):
 
         self._mem_storage[host.identifier] = {
             'nodes': {identifier: {'endpoint': str(endpoint)}},
-            'peers': dict(),
-            'messages': dict()
+            'peers': {},
+            'messages': {}
         }
 
     async def find_node(self, host: Node, questioners: set[NodeIdentifier], identifier: NodeIdentifier) -> Node:
@@ -79,7 +86,7 @@ class MockNodeClient(INodeClient):
             raise DoesNotExist
 
         if (messages := self._mem_storage[target.node]['messages'].get(target.peer)) is None:
-            self._mem_storage[target.node]['messages'][target.peer] = list()
+            self._mem_storage[target.node]['messages'][target.peer] = []
             messages = self._mem_storage[target.node]['messages'][target.peer]
 
         source = AuthUtils.extract_identifier(credentials)
@@ -99,7 +106,7 @@ class MockNodeClient(INodeClient):
             raise DoesNotExist
 
         if (messages := self._mem_storage[target.node]['messages'].get(target.peer)) is None:
-            return list()
+            return []
 
         return [
             Message(

@@ -6,7 +6,7 @@ from src.abc.infra.ipeer_repo import IPeerRepo
 from src.settings import NodeSettings
 from src.type.entity import Peer
 from src.type.exception import AlreadyExists, DoesNotExist
-from src.type.internal import PeerIdentifier, Keyring, UniversalPeerIdentifier
+from src.type.internal import Keyring, PeerIdentifier, UniversalPeerIdentifier
 
 
 class RedisRepoPeerObjectModel(TypedDict):
@@ -53,4 +53,4 @@ class PeerRepo(IPeerRepo):
         if not await self.exists(identifier):
             raise DoesNotExist
 
-        await self._connection.delete(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier)) 
+        await self._connection.delete(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier))

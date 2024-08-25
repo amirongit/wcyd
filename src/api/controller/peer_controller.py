@@ -3,8 +3,8 @@ from blacksheep.server.authorization import allow_anonymous
 from blacksheep.server.controllers import post
 
 from src.abc.use_case.add_peer_use_case import AddPeerUseCase
-from src.api.docs import docs, unsecure_handler
 from src.api.controller.base_controller import BaseController
+from src.api.docs import docs, unsecure_handler
 from src.api.io_type.peer_io import PeerCreationRequest
 
 

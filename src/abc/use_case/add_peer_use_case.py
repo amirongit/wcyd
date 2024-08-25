@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.type.internal import PeerIdentifier, Keyring
+from src.type.internal import Keyring, PeerIdentifier
 
 
 class AddPeerUseCase(ABC):

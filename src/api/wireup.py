@@ -1,9 +1,9 @@
 from typing import Type
+
 from blacksheep import Application, Request, Response, not_found
 from redis.asyncio import Redis
 
 from src.settings import read_settings
-
 
 SETTINGS = read_settings()
 
@@ -24,6 +24,7 @@ async def inject_dependencies(app: Application) -> None:
     from src.infra.node_client import NodeClient
     from src.infra.node_repo import NodeRepo
     from src.infra.peer_repo import PeerRepo
+    from src.settings import AuthenticationSettings, NodeSettings
     from src.use_case.add_peer import AddPeer
     from src.use_case.connect_node import ConnectNode
     from src.use_case.find_node import FindNode
@@ -31,7 +32,6 @@ async def inject_dependencies(app: Application) -> None:
     from src.use_case.get_related_messages import GetRelatedMessages
     from src.use_case.remove_peer import RemovePeer
     from src.use_case.send_message import SendMessage
-    from src.settings import AuthenticationSettings, NodeSettings
 
     app.services.add_instance(Redis.from_url(str(SETTINGS.REDIS.DSN), decode_responses=True)) # type: ignore
     app.services.add_singleton(INodeRepo, NodeRepo) # type: ignore
@@ -53,8 +53,8 @@ async def register_controllers(app: Application) -> None:
     from src.api.controller.message_controller import MessageController
     from src.api.controller.node_controller import NodeController
     from src.api.controller.peer_controller import PeerController
-    from src.api.controller.related_peer_controller import RelatedPeerController
     from src.api.controller.related_message_controller import RelatedMessageController
+    from src.api.controller.related_peer_controller import RelatedPeerController
 
 
 async def register_exception_handlers(app: Application) -> None:

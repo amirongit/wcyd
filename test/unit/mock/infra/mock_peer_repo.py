@@ -1,9 +1,10 @@
 from typing import TypedDict
+
 from src.abc.infra.ipeer_repo import IPeerRepo
 from src.settings import NodeSettings
 from src.type.entity import Peer
 from src.type.exception import AlreadyExists, DoesNotExist
-from src.type.internal import PeerIdentifier, Keyring, UniversalPeerIdentifier
+from src.type.internal import Keyring, PeerIdentifier, UniversalPeerIdentifier
 
 
 class MockRepoPeerObjectModel(TypedDict):
@@ -13,7 +14,7 @@ class MockRepoPeerObjectModel(TypedDict):
 
 class MockPeerRepo(IPeerRepo):
     def __init__(self, node_settings: NodeSettings) -> None:
-        self._mem_storage: dict[PeerIdentifier, MockRepoPeerObjectModel] = dict()
+        self._mem_storage: dict[PeerIdentifier, MockRepoPeerObjectModel] = {}
         self._settings = node_settings
 
     async def get(self, identifier: PeerIdentifier) -> Peer:
@@ -26,8 +27,8 @@ class MockPeerRepo(IPeerRepo):
                     encryption=obj['encryption_key']
                 )
             )
-        except KeyError:
-            raise DoesNotExist
+        except KeyError as e:
+            raise DoesNotExist from e
 
     async def exists(self, identifier: PeerIdentifier) -> bool:
         return identifier in self._mem_storage
@@ -41,5 +42,5 @@ class MockPeerRepo(IPeerRepo):
     async def delete(self, identifier: PeerIdentifier) -> None:
         try:
             self._mem_storage.pop(identifier)
-        except KeyError:
-            raise DoesNotExist
+        except KeyError as e:
+            raise DoesNotExist from e

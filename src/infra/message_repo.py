@@ -31,7 +31,7 @@ class MessageRepo(IMessageRepo):
         )
 
     async def relative_to_target(self, identifier: PeerIdentifier) -> list[Message]:
-        message_list: list[Message] = list()
+        message_list: list[Message] = []
 
         for key in await self._connection.keys(
             self._REDIS_KEY_NAMESPACE_.format(identifier='*', target_identifier=identifier)

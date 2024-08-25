@@ -3,9 +3,9 @@ from typing import TypedDict
 from redis.asyncio import Redis
 
 from src.abc.infra.inode_repo import INodeRepo
-from src.type.internal import EndPoint, NodeIdentifier
 from src.type.entity import Node
 from src.type.exception import AlreadyExists, DoesNotExist
+from src.type.internal import EndPoint, NodeIdentifier
 
 
 class RedisRepoNodeObjectModel(TypedDict):
@@ -20,7 +20,11 @@ class NodeRepo(INodeRepo):
         self._connection = connection
 
     async def get(self, identifier: NodeIdentifier) -> Node:
-        if bool(obj := await self._connection.hgetall(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier))): # type: ignore
+        if bool(
+            obj := await self._connection.hgetall(
+                self._REDIS_KEY_NAMESPACE_.format(identifier=identifier)
+            ) # type: ignore
+        ):
             return Node(identifier=identifier, **obj)
 
         raise DoesNotExist

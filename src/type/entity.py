@@ -2,7 +2,7 @@ from uuid import UUID
 
 from pydantic.dataclasses import dataclass
 
-from src.type.internal import NodeIdentifier, EndPoint, Keyring, UniversalPeerIdentifier
+from src.type.internal import EndPoint, Keyring, NodeIdentifier, UniversalPeerIdentifier
 
 
 @dataclass(kw_only=True)
