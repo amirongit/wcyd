@@ -28,5 +28,5 @@ class Settings:
 
 
 def read_settings() -> Settings:
-    with open('./settings.json', 'r') as f:
+    with open("./settings.json", "r") as f:
         return Settings(**loads(f.read()))

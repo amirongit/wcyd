@@ -45,74 +45,62 @@ class MockNodeClient(INodeClient):
         self._mem_storage: dict[NodeIdentifier, DirectNeighborMemStorage] = {}
 
     async def connect_node(self, host: Node, identifier: NodeIdentifier, endpoint: EndPoint) -> None:
-        if host.identifier in self._mem_storage and identifier in self._mem_storage[host.identifier]['nodes']:
+        if host.identifier in self._mem_storage and identifier in self._mem_storage[host.identifier]["nodes"]:
             raise AlreadyExists
 
         self._mem_storage[host.identifier] = {
-            'nodes': {identifier: {'endpoint': str(endpoint)}},
-            'peers': {},
-            'messages': {}
+            "nodes": {identifier: {"endpoint": str(endpoint)}},
+            "peers": {},
+            "messages": {},
         }
 
     async def find_node(self, host: Node, questioners: set[NodeIdentifier], identifier: NodeIdentifier) -> Node:
         if host.identifier in questioners:
             raise AlreadyAnswered
 
-        if (obj := self._mem_storage[host.identifier]['nodes'].get(identifier)) is None:
+        if (obj := self._mem_storage[host.identifier]["nodes"].get(identifier)) is None:
             raise DoesNotExist
 
-        return Node(identifier=identifier, endpoint=AnyUrl(obj['endpoint']))
+        return Node(identifier=identifier, endpoint=AnyUrl(obj["endpoint"]))
 
     async def find_peer(self, host: Node, identifier: UniversalPeerIdentifier) -> Peer:
-        if (obj := self._mem_storage[host.identifier]['peers'].get(identifier.peer)) is None:
+        if (obj := self._mem_storage[host.identifier]["peers"].get(identifier.peer)) is None:
             raise DoesNotExist
 
         return Peer(
-            identifier=identifier,
-            keyring=Keyring(
-                signing=obj['signing_key'],
-                encryption=obj['encryption_key']
-            )
+            identifier=identifier, keyring=Keyring(signing=obj["signing_key"], encryption=obj["encryption_key"])
         )
 
     async def send_message(
-        self,
-        host: Node,
-        credentials: PeerCredentials,
-        target: UniversalPeerIdentifier,
-        content: str
+        self, host: Node, credentials: PeerCredentials, target: UniversalPeerIdentifier, content: str
     ) -> None:
-        if target.peer not in self._mem_storage[target.node]['peers']:
+        if target.peer not in self._mem_storage[target.node]["peers"]:
             raise DoesNotExist
 
-        if (messages := self._mem_storage[target.node]['messages'].get(target.peer)) is None:
-            self._mem_storage[target.node]['messages'][target.peer] = []
-            messages = self._mem_storage[target.node]['messages'][target.peer]
+        if (messages := self._mem_storage[target.node]["messages"].get(target.peer)) is None:
+            self._mem_storage[target.node]["messages"][target.peer] = []
+            messages = self._mem_storage[target.node]["messages"][target.peer]
 
         source = AuthUtils.extract_identifier(credentials)
         messages.append(
-            {
-                'identifier': str(uuid4()),
-                'source_node': source.node,
-                'source_peer': source.peer,
-                'content': content
-            }
+            {"identifier": str(uuid4()), "source_node": source.node, "source_peer": source.peer, "content": content}
         )
 
     async def get_related_messages(self, host: Node, credentials: PeerCredentials) -> list[Message]:
         target = AuthUtils.extract_identifier(credentials)
 
-        if target.peer not in self._mem_storage[target.node]['peers']:
+        if target.peer not in self._mem_storage[target.node]["peers"]:
             raise DoesNotExist
 
-        if (messages := self._mem_storage[target.node]['messages'].get(target.peer)) is None:
+        if (messages := self._mem_storage[target.node]["messages"].get(target.peer)) is None:
             return []
 
         return [
             Message(
-                identifier=UUID(obj['identifier']),
-                source=UniversalPeerIdentifier(peer=obj['source_peer'], node=obj['source_node']),
+                identifier=UUID(obj["identifier"]),
+                source=UniversalPeerIdentifier(peer=obj["source_peer"], node=obj["source_node"]),
                 target=target,
-                content=obj['content']
-            ) for obj in messages
+                content=obj["content"],
+            )
+            for obj in messages
         ]

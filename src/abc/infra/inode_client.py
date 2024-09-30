@@ -1,12 +1,7 @@
 from abc import ABC, abstractmethod
 
 from src.type.entity import Message, Node, Peer
-from src.type.internal import (
-    EndPoint,
-    NodeIdentifier,
-    PeerCredentials,
-    UniversalPeerIdentifier,
-)
+from src.type.internal import EndPoint, NodeIdentifier, PeerCredentials, UniversalPeerIdentifier
 
 
 class INodeClient(ABC):
@@ -22,11 +17,7 @@ class INodeClient(ABC):
 
     @abstractmethod
     async def send_message(
-        self,
-        host: Node,
-        credentials: PeerCredentials,
-        target: UniversalPeerIdentifier,
-        content: str
+        self, host: Node, credentials: PeerCredentials, target: UniversalPeerIdentifier, content: str
     ) -> None: ...
 
     @abstractmethod

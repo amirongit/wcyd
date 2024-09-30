@@ -15,7 +15,7 @@ class SendMessage(SendMessageUseCase):
         node_client: INodeClient,
         message_repo: IMessageRepo,
         peer_repo: IPeerRepo,
-        node_settings: NodeSettings
+        node_settings: NodeSettings,
     ) -> None:
         self._find_node_use_case = find_node_use_case
         self._node_client = node_client
@@ -28,14 +28,11 @@ class SendMessage(SendMessageUseCase):
         source: UniversalPeerIdentifier,
         target: UniversalPeerIdentifier,
         content: str,
-        credentials: PeerCredentials
+        credentials: PeerCredentials,
     ) -> None:
         if target.node != self._settings.IDENTIFIER:
             await self._node_client.send_message(
-                await self._find_node_use_case.execute(target.node),
-                credentials,
-                target,
-                content
+                await self._find_node_use_case.execute(target.node), credentials, target, content
             )
         elif not await self._peer_repo.exists(target.peer):
             raise DoesNotExist

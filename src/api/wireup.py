@@ -33,20 +33,20 @@ async def inject_dependencies(app: Application) -> None:
     from src.use_case.remove_peer import RemovePeer
     from src.use_case.send_message import SendMessage
 
-    app.services.add_instance(Redis.from_url(str(SETTINGS.REDIS.DSN), decode_responses=True)) # type: ignore
-    app.services.add_singleton(INodeRepo, NodeRepo) # type: ignore
-    app.services.add_singleton(IPeerRepo, PeerRepo) # type: ignore
-    app.services.add_singleton(IMessageRepo, MessageRepo) # type: ignore
-    app.services.add_scoped(INodeClient, NodeClient) # type: ignore
-    app.services.add_instance(SETTINGS.LOCAL_NODE, NodeSettings) # type: ignore
-    app.services.add_instance(SETTINGS.AUTHENTICATION, AuthenticationSettings) # type: ignore
-    app.services.add_singleton(AddPeerUseCase, AddPeer) # type: ignore
-    app.services.add_singleton(ConnectNodeUseCase, ConnectNode) # type: ignore
-    app.services.add_singleton(FindNodeUseCase, FindNode) # type: ignore
-    app.services.add_singleton(FindPeerUseCase, FindPeer) # type: ignore
-    app.services.add_singleton(GetRelatedMessagesUseCase, GetRelatedMessages) # type: ignore
-    app.services.add_singleton(RemovePeerUseCase, RemovePeer) # type: ignore
-    app.services.add_singleton(SendMessageUseCase, SendMessage) # type: ignore
+    app.services.add_instance(Redis.from_url(str(SETTINGS.REDIS.DSN), decode_responses=True))  # type: ignore
+    app.services.add_singleton(INodeRepo, NodeRepo)  # type: ignore
+    app.services.add_singleton(IPeerRepo, PeerRepo)  # type: ignore
+    app.services.add_singleton(IMessageRepo, MessageRepo)  # type: ignore
+    app.services.add_scoped(INodeClient, NodeClient)  # type: ignore
+    app.services.add_instance(SETTINGS.LOCAL_NODE, NodeSettings)  # type: ignore
+    app.services.add_instance(SETTINGS.AUTHENTICATION, AuthenticationSettings)  # type: ignore
+    app.services.add_singleton(AddPeerUseCase, AddPeer)  # type: ignore
+    app.services.add_singleton(ConnectNodeUseCase, ConnectNode)  # type: ignore
+    app.services.add_singleton(FindNodeUseCase, FindNode)  # type: ignore
+    app.services.add_singleton(FindPeerUseCase, FindPeer)  # type: ignore
+    app.services.add_singleton(GetRelatedMessagesUseCase, GetRelatedMessages)  # type: ignore
+    app.services.add_singleton(RemovePeerUseCase, RemovePeer)  # type: ignore
+    app.services.add_singleton(SendMessageUseCase, SendMessage)  # type: ignore
 
 
 async def register_controllers(app: Application) -> None:
@@ -61,28 +61,20 @@ async def register_exception_handlers(app: Application) -> None:
     from src.type.exception import AlreadyAnswered, AlreadyExists, DoesNotExist
 
     async def handle_already_exists(
-        self: Application,
-        request: Request,
-        exc: AlreadyExists | Type[AlreadyExists]
+        self: Application, request: Request, exc: AlreadyExists | Type[AlreadyExists]
     ) -> Response:
         return Response(status=409)
 
     app.exceptions_handlers[AlreadyExists] = handle_already_exists
 
     async def handle_already_answered(
-        self: Application,
-        request: Request,
-        exc: AlreadyAnswered | Type[AlreadyAnswered]
+        self: Application, request: Request, exc: AlreadyAnswered | Type[AlreadyAnswered]
     ) -> Response:
         return Response(status=409)
 
     app.exceptions_handlers[AlreadyAnswered] = handle_already_answered
 
-    async def handle_not_found(
-        self: Application,
-        request: Request,
-        exc: DoesNotExist | Type[DoesNotExist]
-    ) -> Response:
+    async def handle_not_found(self: Application, request: Request, exc: DoesNotExist | Type[DoesNotExist]) -> Response:
         return not_found()
 
     app.exceptions_handlers[DoesNotExist] = handle_not_found

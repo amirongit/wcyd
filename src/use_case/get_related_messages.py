@@ -15,7 +15,7 @@ class GetRelatedMessages(GetRelatedMessagesUseCase):
         peer_repo: IPeerRepo,
         message_repo: IMessageRepo,
         node_client: INodeClient,
-        node_settings: NodeSettings
+        node_settings: NodeSettings,
     ) -> None:
         self._find_node_use_case = find_node_use_case
         self._peer_repo = peer_repo
@@ -26,8 +26,7 @@ class GetRelatedMessages(GetRelatedMessagesUseCase):
     async def execute(self, identifier: UniversalPeerIdentifier, credentials: PeerCredentials) -> list[Message]:
         if identifier.node != self._settings.IDENTIFIER:
             return await self._client.get_related_messages(
-                await self._find_node_use_case.execute(identifier.node),
-                credentials
+                await self._find_node_use_case.execute(identifier.node), credentials
             )
 
         return await self._message_repo.relative_to_target(identifier.peer)

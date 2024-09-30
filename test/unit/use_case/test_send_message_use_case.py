@@ -23,17 +23,14 @@ from src.use_case.send_message import SendMessage
 
 class TestSendMessageUseCase(IsolatedAsyncioTestCase):
 
-    SAMPLE_SIGNING_KEY = 'QW1j319IkhjIGVmOBZAJt0Tsqs6d4nWbA5n6l1iupj8='
-    SAMPLE_ENCRYPTION_KEY = 'Ov4eCC6vqpcBbswXLfn0aRD9TvafYB+BVprg7eyv03o='
-    EXISTING_PEER_IDENTIFIER = 'existing-peer-identifier'
-    EXISTING_NEIGHBOR_IDENTIFIER = 'existing-neighbor-identifier'
-    EXTERNAL_PEER_IDENTIFIER = 'external-peer-identifier'
+    SAMPLE_SIGNING_KEY = "QW1j319IkhjIGVmOBZAJt0Tsqs6d4nWbA5n6l1iupj8="
+    SAMPLE_ENCRYPTION_KEY = "Ov4eCC6vqpcBbswXLfn0aRD9TvafYB+BVprg7eyv03o="
+    EXISTING_PEER_IDENTIFIER = "existing-peer-identifier"
+    EXISTING_NEIGHBOR_IDENTIFIER = "existing-neighbor-identifier"
+    EXTERNAL_PEER_IDENTIFIER = "external-peer-identifier"
 
     def setUp(self) -> None:
-        self._settings = NodeSettings(
-            IDENTIFIER='test-node',
-            ENDPOINT=AnyUrl('http://localhost:44777')
-        )
+        self._settings = NodeSettings(IDENTIFIER="test-node", ENDPOINT=AnyUrl("http://localhost:44777"))
         self._mock_node_client = MockNodeClient()
         self._mock_message_repo = MockMessageRepo(self._settings)
         self._mock_node_repo = MockNodeRepo()
@@ -42,36 +39,34 @@ class TestSendMessageUseCase(IsolatedAsyncioTestCase):
         add_internal_peer(
             self._mock_peer_repo,
             self.EXISTING_PEER_IDENTIFIER,
-            Keyring(signing=self.SAMPLE_SIGNING_KEY, encryption=self.SAMPLE_ENCRYPTION_KEY)
+            Keyring(signing=self.SAMPLE_SIGNING_KEY, encryption=self.SAMPLE_ENCRYPTION_KEY),
         )
         add_internal_neighbor(
-            self._mock_node_repo,
-            self.EXISTING_NEIGHBOR_IDENTIFIER,
-            AnyUrl('http://not-being-tested:80')
+            self._mock_node_repo, self.EXISTING_NEIGHBOR_IDENTIFIER, AnyUrl("http://not-being-tested:80")
         )
         add_external_peer(
             self._mock_node_client,
             self.EXISTING_NEIGHBOR_IDENTIFIER,
             self.EXTERNAL_PEER_IDENTIFIER,
-            Keyring(signing=self.SAMPLE_SIGNING_KEY, encryption=self.SAMPLE_ENCRYPTION_KEY)
+            Keyring(signing=self.SAMPLE_SIGNING_KEY, encryption=self.SAMPLE_ENCRYPTION_KEY),
         )
         self._use_case = SendMessage(
             self._find_node_use_case,
             self._mock_node_client,
             self._mock_message_repo,
             self._mock_peer_repo,
-            self._settings
+            self._settings,
         )
 
     async def test_normal(self) -> None:
-        source = UniversalPeerIdentifier(node='source-node', peer='source-peer')
-        content = 'sample content'
+        source = UniversalPeerIdentifier(node="source-node", peer="source-peer")
+        content = "sample content"
 
         await self._use_case.execute(
             source,
             UniversalPeerIdentifier(node=self._settings.IDENTIFIER, peer=self.EXISTING_PEER_IDENTIFIER),
             content,
-            make_auth_credentials(source)
+            make_auth_credentials(source),
         )
 
         messages = await get_internal_relative_messages(self._mock_message_repo, self.EXISTING_PEER_IDENTIFIER)
@@ -84,16 +79,16 @@ class TestSendMessageUseCase(IsolatedAsyncioTestCase):
     async def test_absent_identifier(self) -> None:
         with self.assertRaises(DoesNotExist):
             await self._use_case.execute(
-                UniversalPeerIdentifier(node='not-being-tested', peer='not-being-tested'),
-                UniversalPeerIdentifier(node=self._settings.IDENTIFIER, peer='absent-identifier'),
-                'not-being-tested',
-                make_auth_credentials(UniversalPeerIdentifier(node='not-being-tested', peer='not-being-tested'))
+                UniversalPeerIdentifier(node="not-being-tested", peer="not-being-tested"),
+                UniversalPeerIdentifier(node=self._settings.IDENTIFIER, peer="absent-identifier"),
+                "not-being-tested",
+                make_auth_credentials(UniversalPeerIdentifier(node="not-being-tested", peer="not-being-tested")),
             )
 
     async def test_external_peer(self) -> None:
-        source = UniversalPeerIdentifier(node='source-node', peer='source-peer')
+        source = UniversalPeerIdentifier(node="source-node", peer="source-peer")
         target = UniversalPeerIdentifier(node=self.EXISTING_NEIGHBOR_IDENTIFIER, peer=self.EXTERNAL_PEER_IDENTIFIER)
-        content = 'sample content'
+        content = "sample content"
 
         await self._use_case.execute(source, target, content, make_auth_credentials(source))
 

@@ -13,23 +13,23 @@ from src.type.internal import UniversalPeerIdentifier
 
 class RelatedPeerController(BaseController):
 
-    ROUTE = 'nodes/{node_identifier}/peers'
+    ROUTE = "nodes/{node_identifier}/peers"
 
     def __init__(self, add_use_case: AddPeerUseCase, find_use_case: FindPeerUseCase) -> None:
         self._add_use_case = add_use_case
         self._find_peer_use_case = find_use_case
 
     @docs(
-        tags=['peers'],
-        summary='get information of a peer within the network which this node is a part of',
+        tags=["peers"],
+        summary="get information of a peer within the network which this node is a part of",
         responses={
-            200: ResponseInfo('information of the queried peer', content=[ContentInfo(PeerModel)]),
-            404: 'not found',
+            200: ResponseInfo("information of the queried peer", content=[ContentInfo(PeerModel)]),
+            404: "not found",
         },
-        on_created=unsecure_handler
+        on_created=unsecure_handler,
     )
     @allow_anonymous()
-    @get('/{peer_identifier}')
+    @get("/{peer_identifier}")
     async def get_peer(self, node_identifier: FromRoute[str], peer_identifier: FromRoute[str]) -> Response:
 
         peer = await self._find_peer_use_case.execute(

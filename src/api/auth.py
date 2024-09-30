@@ -10,8 +10,7 @@ from src.utils import EncryptionUtils
 
 
 class DecentralizedAuthenticationHandler(AuthenticationHandler):
-
-    '''
+    """
     authentication steps:
         a. the peer (client) signs a timestamp with its private signing key
         b. the signed timestamp is placed in the `Authorization` header with an specific format *
@@ -20,7 +19,7 @@ class DecentralizedAuthenticationHandler(AuthenticationHandler):
            the peer is authenticated within the scope of the request
 
     * header format: Basic b64encode(peer@node:hex(signed_timestamp))
-    '''
+    """
 
     def __init__(self, app: Application) -> None:
         super().__init__()
@@ -35,22 +34,22 @@ class DecentralizedAuthenticationHandler(AuthenticationHandler):
         return self.app.services.resolve(AuthenticationSettings)
 
     # pylint: disable=invalid-overridden-method
-    async def authenticate(self, context: Request) -> Identity | None: # type: ignore
+    async def authenticate(self, context: Request) -> Identity | None:  # type: ignore
         context.identity = None
 
         try:
             identifier, signature = EncryptionUtils.decrypt_base64(
-                context.get_first_header(b'Authorization').decode().removeprefix('Basic ') # type: ignore
-            ).split(':')
-            peer_identifier, node_identifier = identifier.split('@')
+                context.get_first_header(b"Authorization").decode().removeprefix("Basic ")  # type: ignore
+            ).split(":")
+            peer_identifier, node_identifier = identifier.split("@")
             universal_identifier = UniversalPeerIdentifier(peer=peer_identifier, node=node_identifier)
             peer = await self._find_peer_use_case.execute(universal_identifier)
-            signed_timestamp  = float(EncryptionUtils.verify_signature(signature, peer.keyring.signing))
+            signed_timestamp = float(EncryptionUtils.verify_signature(signature, peer.keyring.signing))
             now, window_range = datetime.now(), timedelta(seconds=self._settings.TIME_WINDOW)
             start, end = now - window_range, now + window_range
             given = datetime.fromtimestamp(signed_timestamp)
             if start < given < end:
-                context.identity = Identity({'id': universal_identifier}, 'authenticated')
+                context.identity = Identity({"id": universal_identifier}, "authenticated")
         # pylint: disable=broad-exception-caught
         except Exception:
             pass

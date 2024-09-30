@@ -16,7 +16,7 @@ class RedisRepoPeerObjectModel(TypedDict):
 
 class PeerRepo(IPeerRepo):
 
-    _REDIS_KEY_NAMESPACE_: str = 'peer:{identifier}'
+    _REDIS_KEY_NAMESPACE_: str = "peer:{identifier}"
 
     def __init__(self, connection: Redis, node_settings: NodeSettings) -> None:
         self._connection = connection
@@ -27,14 +27,14 @@ class PeerRepo(IPeerRepo):
         if bool(
             obj := await self._connection.hgetall(
                 self._REDIS_KEY_NAMESPACE_.format(identifier=identifier)
-            ) # type: ignore
+            )  # type: ignore
         ):
             return Peer(
                 identifier=UniversalPeerIdentifier(node=self._settigns.IDENTIFIER, peer=identifier),
                 keyring=Keyring(
-                    signing=obj['signing_key'],
-                    encryption=obj['encryption_key'],
-                )
+                    signing=obj["signing_key"],
+                    encryption=obj["encryption_key"],
+                ),
             )
 
         raise DoesNotExist
@@ -46,8 +46,8 @@ class PeerRepo(IPeerRepo):
         if await self.exists(identifier):
             raise AlreadyExists
 
-        obj: RedisRepoPeerObjectModel = {'signing_key': keyring.signing, 'encryption_key': keyring.encryption}
-        await self._connection.hmset(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier), obj) # type: ignore
+        obj: RedisRepoPeerObjectModel = {"signing_key": keyring.signing, "encryption_key": keyring.encryption}
+        await self._connection.hmset(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier), obj)  # type: ignore
 
     async def delete(self, identifier: PeerIdentifier) -> None:
         if not await self.exists(identifier):

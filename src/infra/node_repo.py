@@ -14,7 +14,7 @@ class RedisRepoNodeObjectModel(TypedDict):
 
 class NodeRepo(INodeRepo):
 
-    _REDIS_KEY_NAMESPACE_: str = 'node:{identifier}'
+    _REDIS_KEY_NAMESPACE_: str = "node:{identifier}"
 
     def __init__(self, connection: Redis) -> None:
         self._connection = connection
@@ -23,7 +23,7 @@ class NodeRepo(INodeRepo):
         if bool(
             obj := await self._connection.hgetall(
                 self._REDIS_KEY_NAMESPACE_.format(identifier=identifier)
-            ) # type: ignore
+            )  # type: ignore
         ):
             return Node(identifier=identifier, **obj)
 
@@ -36,12 +36,11 @@ class NodeRepo(INodeRepo):
         if await self.exists(identifier):
             raise AlreadyExists
 
-        obj: RedisRepoNodeObjectModel = {'endpoint': str(endpoint)}
-        await self._connection.hmset(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier), obj) # type: ignore
+        obj: RedisRepoNodeObjectModel = {"endpoint": str(endpoint)}
+        await self._connection.hmset(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier), obj)  # type: ignore
 
     async def all(self) -> list[Node]:
         return [
-            await self.get(key.removeprefix('node:')) for key in await self._connection.keys(
-                self._REDIS_KEY_NAMESPACE_.format(identifier='*')
-            )
+            await self.get(key.removeprefix("node:"))
+            for key in await self._connection.keys(self._REDIS_KEY_NAMESPACE_.format(identifier="*"))
         ]

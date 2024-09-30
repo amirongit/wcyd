@@ -27,23 +27,19 @@ class MockMessageRepo(IMessageRepo):
             messages = self._mem_storage[target]
 
         messages.append(
-            {
-                'identifier': uuid4(),
-                'source_node': source.node,
-                'source_peer': source.peer,
-                'content': content
-            }
+            {"identifier": uuid4(), "source_node": source.node, "source_peer": source.peer, "content": content}
         )
 
     async def relative_to_target(self, identifier: PeerIdentifier) -> list[Message]:
         try:
             return [
                 Message(
-                    identifier=obj['identifier'],
-                    source=UniversalPeerIdentifier(node=obj['source_node'], peer=obj['source_peer']),
+                    identifier=obj["identifier"],
+                    source=UniversalPeerIdentifier(node=obj["source_node"], peer=obj["source_peer"]),
                     target=UniversalPeerIdentifier(node=self._settings.IDENTIFIER, peer=identifier),
-                    content=obj['content']
-                ) for obj in self._mem_storage[identifier]
+                    content=obj["content"],
+                )
+                for obj in self._mem_storage[identifier]
             ]
         except KeyError:
             return []

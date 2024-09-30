@@ -12,20 +12,20 @@ from src.api.io_type.node_io import NodeCreationRequest, NodeModel
 
 class NodeController(BaseController):
 
-    ROUTE = '/nodes'
+    ROUTE = "/nodes"
 
     def __init__(self, connect_use_case: ConnectNodeUseCase, find_node_use_case: FindNodeUseCase) -> None:
         self._connect_use_case = connect_use_case
         self._find_use_case = find_node_use_case
 
     @docs(
-        tags=['nodes'],
-        summary='register provided node as neighbor',
-        responses={201: 'registeration done successfully', 409: 'already connected'},
-        on_created=unsecure_handler
+        tags=["nodes"],
+        summary="register provided node as neighbor",
+        responses={201: "registeration done successfully", 409: "already connected"},
+        on_created=unsecure_handler,
     )
     @allow_anonymous()
-    @post('/')
+    @post("/")
     async def register_node(self, request_body: FromJSON[NodeCreationRequest]) -> Response:
 
         await self._connect_use_case.execute(request_body.value.identifier, request_body.value.endpoint)
@@ -33,17 +33,17 @@ class NodeController(BaseController):
         return self.created()
 
     @docs(
-        tags=['nodes'],
-        summary='get information of a node within the network which this node is a part of',
+        tags=["nodes"],
+        summary="get information of a node within the network which this node is a part of",
         responses={
-            200: ResponseInfo('information of the queried node', content=[ContentInfo(NodeModel)]),
-            404: 'not found',
-            409: 'already answered'
+            200: ResponseInfo("information of the queried node", content=[ContentInfo(NodeModel)]),
+            404: "not found",
+            409: "already answered",
         },
-        on_created=unsecure_handler
+        on_created=unsecure_handler,
     )
     @allow_anonymous()
-    @get('/{node_identifier}')
+    @get("/{node_identifier}")
     async def get_node(self, node_identifier: FromRoute[str], questioners: FromQuery[set[str]]) -> Response:
 
         node = await self._find_use_case.execute(node_identifier.value, questioners.value)

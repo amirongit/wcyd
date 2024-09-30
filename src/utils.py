@@ -24,7 +24,7 @@ class EncryptionUtils:
 class AuthUtils:
     @staticmethod
     def extract_identifier(credentials: PeerCredentials) -> UniversalPeerIdentifier:
-        peer_identifier, node_identifier = EncryptionUtils.decrypt_base64(
-            credentials
-        ).removeprefix('Basic ').split(':')[0].split('@')
+        peer_identifier, node_identifier = (
+            EncryptionUtils.decrypt_base64(credentials).removeprefix("Basic ").split(":")[0].split("@")
+        )
         return UniversalPeerIdentifier(peer=peer_identifier, node=node_identifier)

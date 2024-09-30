@@ -19,7 +19,7 @@ class MockNodeRepo(INodeRepo):
 
     async def get(self, identifier: NodeIdentifier) -> Node:
         if (obj := self._mem_storage.get(identifier)) is not None:
-            return Node(identifier=identifier, **obj) # type: ignore
+            return Node(identifier=identifier, **obj)  # type: ignore
 
         raise DoesNotExist
 
@@ -30,12 +30,13 @@ class MockNodeRepo(INodeRepo):
         if await self.exists(identifier):
             raise AlreadyExists
 
-        self._mem_storage[identifier] = {'endpoint': str(endpoint)}
+        self._mem_storage[identifier] = {"endpoint": str(endpoint)}
 
     async def all(self) -> list[Node]:
         return [
             Node(
                 identifier=k,
-                endpoint=AnyUrl(v['endpoint']),
-            ) for k, v in self._mem_storage.items()
+                endpoint=AnyUrl(v["endpoint"]),
+            )
+            for k, v in self._mem_storage.items()
         ]

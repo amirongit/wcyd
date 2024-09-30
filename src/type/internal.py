@@ -23,7 +23,7 @@ class Keyring:
     signing: str
     encryption: str
 
-    @model_validator(mode='after')
+    @model_validator(mode="after")
     def _v(self: Self) -> Self:
         try:
             NACLPublicKey(self.encryption.encode(), Base64Encoder)

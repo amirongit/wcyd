@@ -30,5 +30,8 @@ disable = [
 ignore = ["wireup.py", "settings.py"]
 
 [tool.isort]
-line_length = 90  # Specify your desired max line length
-profile = "black"  # Optional: if you're using Black's formatting style
+line_length = 120
+profile = "black"
+
+[tool.black]
+line-length = 120

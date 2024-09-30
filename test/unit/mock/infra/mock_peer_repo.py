@@ -22,10 +22,7 @@ class MockPeerRepo(IPeerRepo):
             obj = self._mem_storage[identifier]
             return Peer(
                 identifier=UniversalPeerIdentifier(peer=identifier, node=self._settings.IDENTIFIER),
-                keyring=Keyring(
-                    signing=obj['signing_key'],
-                    encryption=obj['encryption_key']
-                )
+                keyring=Keyring(signing=obj["signing_key"], encryption=obj["encryption_key"]),
             )
         except KeyError as e:
             raise DoesNotExist from e
@@ -37,7 +34,7 @@ class MockPeerRepo(IPeerRepo):
         if await self.exists(identifier):
             raise AlreadyExists
 
-        self._mem_storage[identifier] = {'signing_key': keyring.signing, 'encryption_key': keyring.encryption}
+        self._mem_storage[identifier] = {"signing_key": keyring.signing, "encryption_key": keyring.encryption}
 
     async def delete(self, identifier: PeerIdentifier) -> None:
         try:

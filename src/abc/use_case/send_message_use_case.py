@@ -11,5 +11,5 @@ class SendMessageUseCase(ABC):
         source: UniversalPeerIdentifier,
         target: UniversalPeerIdentifier,
         content: str,
-        credentials: PeerCredentials
+        credentials: PeerCredentials,
     ) -> None: ...
