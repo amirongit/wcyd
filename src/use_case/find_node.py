@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from src.abc.infra.inode_client import INodeClient
 from src.abc.infra.inode_repo import INodeRepo
 from src.abc.use_case.find_node_use_case import FindNodeUseCase
@@ -23,7 +25,7 @@ class FindNode(FindNodeUseCase):
         try:
             return await self._node_repo.get(identifier)
         except DoesNotExist:
-            new_questioners = questioners | {self._settings.IDENTIFIER}
+            (new_questioners := deepcopy(questioners)).add(self._settings.IDENTIFIER)
             for node in filter(lambda n: n.identifier not in new_questioners, await self._node_repo.all()):
                 try:
                     return await self._node_client.find_node(node, new_questioners, identifier)
