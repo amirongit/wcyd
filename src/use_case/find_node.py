@@ -29,9 +29,7 @@ class FindNode(FindNodeUseCase):
             for node in filter(lambda n: n.identifier not in new_questioners, await self._node_repo.all()):
                 try:
                     return await self._node_client.find_node(node, new_questioners, identifier)
-                except DoesNotExist:
+                except (DoesNotExist, AlreadyAnswered):
                     new_questioners.add(node.identifier)
-                except AlreadyAnswered:
-                    continue
 
         raise DoesNotExist
