@@ -25,7 +25,6 @@ disable = [
   "missing-function-docstring",
   "too-few-public-methods",
   "too-many-arguments",
-  "duplicate-code",
   "too-many-positional-arguments"
 ]
 ignore = ["wireup.py", "settings.py"]

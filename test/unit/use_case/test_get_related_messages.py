@@ -29,6 +29,7 @@ class TestSendMessageUseCase(IsolatedAsyncioTestCase):
     EXTERNAL_PEER_IDENTIFIER = "external-peer-identifier"
 
     def setUp(self) -> None:
+        # pylint: disable=duplicate-code
         self._settings = NodeSettings(IDENTIFIER="test-node", ENDPOINT=AnyUrl("http://localhost:44777"))
         self._mock_node_client = MockNodeClient()
         self._mock_message_repo = MockMessageRepo(self._settings)
