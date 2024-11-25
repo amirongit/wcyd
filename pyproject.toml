@@ -17,15 +17,15 @@ init_forbid_extra = true
 init_typed = true
 warn_required_dynamic_aliases = true
 
-[tool.pylint.imports]
+[tool.pylint]
 max-line-length = 120
 disable = [
-  "missing-module-docstring",
-  "missing-class-docstring",
-  "missing-function-docstring",
-  "too-few-public-methods",
-  "too-many-arguments",
-  "too-many-positional-arguments"
+  "C0114",
+  "C0115",
+  "C0116",
+  "R0903",
+  "R0913",
+  "R0917"
 ]
 ignore = ["wireup.py", "settings.py"]
 
