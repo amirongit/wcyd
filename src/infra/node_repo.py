@@ -21,16 +21,19 @@ class NodeRepo(INodeRepo):
 
     async def get(self, identifier: NodeIdentifier) -> Node:
         if bool(
-            obj := await self._connection.hgetall(
+            obj := await self._connection.hgetall(  # type: ignore
                 self._REDIS_KEY_NAMESPACE_.format(identifier=identifier)
-            )  # type: ignore
+            )
         ):
-            return Node(identifier=identifier, **obj)
+            return Node(identifier=identifier, **obj)  # type: ignore
 
         raise DoesNotExist
 
     async def exists(self, identifier: NodeIdentifier) -> bool:
-        return len(await self._connection.keys(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier))) == 1
+        return (
+            len(await self._connection.keys(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier)))  # type: ignore
+            == 1
+        )
 
     async def create(self, identifier: NodeIdentifier, endpoint: EndPoint) -> None:
         if await self.exists(identifier):
@@ -42,5 +45,5 @@ class NodeRepo(INodeRepo):
     async def all(self) -> list[Node]:
         return [
             await self.get(key.removeprefix("node:"))
-            for key in await self._connection.keys(self._REDIS_KEY_NAMESPACE_.format(identifier="*"))
+            for key in await self._connection.keys(self._REDIS_KEY_NAMESPACE_.format(identifier="*"))  # type: ignore
         ]

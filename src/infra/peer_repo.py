@@ -25,7 +25,7 @@ class PeerRepo(IPeerRepo):
     async def get(self, identifier: PeerIdentifier) -> Peer:
         obj: RedisRepoPeerObjectModel
         if bool(
-            obj := await self._connection.hgetall(
+            obj := await self._connection.hgetall(  # type: ignore
                 self._REDIS_KEY_NAMESPACE_.format(identifier=identifier)
             )  # type: ignore
         ):
@@ -40,7 +40,10 @@ class PeerRepo(IPeerRepo):
         raise DoesNotExist
 
     async def exists(self, identifier: PeerIdentifier) -> bool:
-        return len(await self._connection.keys(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier))) == 1
+        return (
+            len(await self._connection.keys(self._REDIS_KEY_NAMESPACE_.format(identifier=identifier)))  # type: ignore
+            == 1
+        )
 
     async def create(self, identifier: PeerIdentifier, keyring: Keyring) -> None:
         if await self.exists(identifier):

@@ -25,14 +25,14 @@ class MessageRepo(IMessageRepo):
 
     async def create(self, source: UniversalPeerIdentifier, target: PeerIdentifier, content: str) -> None:
         obj: RedisRepoMessageObjectModel = {"source_node": source.node, "source_peer": source.peer, "content": content}
-        await self._connection.hmset(
+        await self._connection.hmset(  # type: ignore
             self._REDIS_KEY_NAMESPACE_.format(identifier=uuid4(), target_identifier=target), obj  # type: ignore
         )
 
     async def relative_to_target(self, identifier: PeerIdentifier) -> list[Message]:
         message_list: list[Message] = []
 
-        for key in await self._connection.keys(
+        for key in await self._connection.keys(  # type: ignore
             self._REDIS_KEY_NAMESPACE_.format(identifier="*", target_identifier=identifier)
         ):
             obj: RedisRepoMessageObjectModel = await self._connection.hgetall(key)  # type: ignore
